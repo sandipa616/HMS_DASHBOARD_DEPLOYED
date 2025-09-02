@@ -1,0 +1,294 @@
+/* ---------- Dashboard Page ---------- */
+.dashboard.page {
+  padding: 2rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f7faff, #eef3ff);
+  width: calc(100% - 120px);
+  margin-left: 120px;
+  transition: all 0.3s ease;
+}
+
+/* ---------- Banner / Cards ---------- */
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+/* First Box (Hello + Image) */
+.firstBox {
+  flex: 2;
+  min-width: 320px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #e6f0ff, #f2f9ff);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+.firstBox:hover {
+  transform: translateY(-5px);
+}
+.firstBox img {
+  width: 140px;
+  margin-right: 1.5rem;
+  border-radius: 10px;
+}
+.firstBox .content p:first-child {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #555;
+}
+.firstBox .content h5 {
+  font-size: 1.8rem;
+  margin: 0.5rem 0;
+  color: #004aad;
+  font-weight: bold;
+}
+.firstBox .content p:last-child {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Stats Cards */
+.secondBox,
+.thirdBox {
+  flex: 1;
+  min-width: 220px;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
+}
+.secondBox:hover,
+.thirdBox:hover {
+  transform: translateY(-5px);
+}
+.secondBox {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+}
+.thirdBox {
+  background: linear-gradient(135deg, #ff512f, #dd2476);
+}
+.secondBox p,
+.thirdBox p {
+  margin: 0;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+.secondBox h3,
+.thirdBox h3 {
+  font-size: 2.4rem;
+  margin-top: 0.5rem;
+  font-weight: 800;
+}
+
+/* ---------- Appointments Section ---------- */
+.banner.appointments {
+  display: block;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+/* Heading */
+.banner.appointments h5 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #004aad;
+  text-align: center;
+}
+
+/* Table Container */
+.table-container {
+  width: 100%;
+  display: block; /* avoid flex issues */
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Table Styling */
+.table-container table {
+  width: 95%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+  background: #004aad;
+  color: #fff;
+}
+th,
+td {
+  padding: 1rem 1.2rem;
+  font-size: 1rem;
+  text-align: left;
+}
+th {
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+tbody tr:nth-child(even) {
+  background: #f9f9ff;
+}
+
+/* ---------- Status Dropdown & Icons ---------- */
+.status-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.value-pending {
+  color: #ff9800;
+  font-weight: bold;
+}
+.value-accepted {
+  color: #4caf50;
+  font-weight: bold;
+}
+.value-rejected {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.status-icon {
+  font-size: 1.3rem;
+  vertical-align: middle;
+}
+.status-icon.pending {
+  color: #ff9800;
+}
+.status-icon.accepted {
+  color: #4caf50;
+}
+.status-icon.rejected {
+  color: #f44336;
+}
+
+/* Visited Icons */
+.green {
+  color: #4caf50;
+  font-size: 1.4rem;
+}
+.red {
+  color: #f44336;
+  font-size: 1.4rem;
+}
+
+/* ==================== Responsiveness ==================== */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .dashboard.page {
+    width: 100%;
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+  .banner {
+    flex-direction: column;
+  }
+  .firstBox {
+    flex-direction: column;
+    text-align: center;
+  }
+  .firstBox img {
+    margin: 0 auto 1rem;
+  }
+  .secondBox,
+  .thirdBox {
+    width: 90%;
+    margin: 0 auto;
+  }
+  .table-container table {
+    width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  th,
+  td {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+  .secondBox h3,
+  .thirdBox h3 {
+    font-size: 1.6rem;
+  }
+  .banner.appointments h5 {
+    font-size: 1.8rem;
+  }
+  .table-container table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
+  select {
+    width: 100%;
+    padding: 0.3rem;
+  }
+  .status-cell {
+    justify-content: center;
+    gap: 0.3rem;
+  }
+}
+
+/* ---------- Mobile Card View for Table ---------- */
+@media (max-width: 600px) {
+  .table-container table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+  thead tr {
+    display: none;
+  }
+
+  tbody tr {
+    background: #fff;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  tbody td {
+    text-align: right;
+    padding: 0.5rem 0;
+    position: relative;
+    font-size: 0.9rem;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    width: 50%;
+    text-align: left;
+    font-weight: bold;
+    color: #004aad;
+  }
+
+  select {
+    width: 100%;
+    margin-top: 0.3rem;
+  }
+  .status-cell {
+    justify-content: flex-start;
+    margin-top: 0.3rem;
+  }
+}

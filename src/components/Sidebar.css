@@ -1,0 +1,126 @@
+/* ===== Global box-sizing ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ========== Sidebar Base Styles ========== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;             /* Visible by default on desktop */
+  width: 120px;
+  min-height: 100vh;
+  background: blue;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 70px 0;
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+
+/* Sidebar Links and Icons */
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.sidebar-links svg {
+  color: white;
+  font-size: 38px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+
+.sidebar-links svg:hover {
+  background: white;
+  color: #3939d9f2;
+  border-radius: 8px;
+  transform: scale(1.05);
+}
+
+/* Hamburger Button Wrapper */
+.sidebar-wrapper {
+  display: none; /* hidden by default on desktop */
+}
+
+/* Hamburger icon itself */
+.sidebar-wrapper .sidebar-hamburger {
+  display: none;
+}
+
+/* ========== Responsive: Tablets and Smaller (<=768px) ========== */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -120px;        /* Hide sidebar off-screen */
+    padding: 20px 0;     /* Reduce padding */
+  }
+
+  .sidebar.show {
+    left: 0;             /* Show sidebar when toggled */
+  }
+
+  .sidebar-wrapper {
+    display: flex;
+    position: fixed;
+    top: 40px;
+    left: 20px;
+    background: #3939d9f2;
+    color: white;
+    height: 45px;
+    width: 45px;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    cursor: pointer;
+  }
+
+  .sidebar-wrapper .sidebar-hamburger {
+    display: block;
+    font-size: 24px;
+  }
+
+  /* Adjust page content when sidebar is open */
+  body.sidebar-open .page {
+    margin-left: 120px;                  /* same as sidebar width */
+    width: calc(100% - 120px);
+    padding-left: 1rem;
+  }
+}
+
+/* ========== Responsive: Mobile (<=480px) ========== */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 60px;           /* Narrower sidebar */
+    left: -60px;           /* Hide sidebar */
+    padding: 10px 0;       /* Less padding */
+  }
+
+  .sidebar.show {
+    left: 0;
+  }
+
+  .sidebar-wrapper {
+    top: 30px;
+    left: 10px;
+    height: 40px;
+    width: 40px;
+  }
+
+  .sidebar-wrapper .sidebar-hamburger {
+    font-size: 20px;
+  }
+
+  .sidebar-links svg {
+    font-size: 28px;
+  }
+
+  /* Adjust page content for smaller sidebar */
+  body.sidebar-open .page {
+    margin-left: 60px;                   /* match sidebar width */
+    width: calc(100% - 60px);
+  }
+}
