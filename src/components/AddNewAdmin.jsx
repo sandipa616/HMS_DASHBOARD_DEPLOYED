@@ -6,7 +6,7 @@ import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./AddNewAdmin.css";
 const AddNewAdmin = () => {
-  const { isAuthenticated} = useContext(Context);
+  const { isAuthenticated } = useContext(Context);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -40,7 +40,6 @@ const AddNewAdmin = () => {
           gender,
           password,
           confirmPassword,
-          
         },
         {
           withCredentials: true,
@@ -143,6 +142,16 @@ const AddNewAdmin = () => {
           </div>
 
           <div className="add-new-admin-row">
+            <label
+              htmlFor="dob"
+              style={{
+                fontSize: "14px",
+                marginBottom: "4px",
+                display: "block",
+              }}
+            >
+              Date of Birth
+            </label>
             <input
               type="date"
               value={dob}

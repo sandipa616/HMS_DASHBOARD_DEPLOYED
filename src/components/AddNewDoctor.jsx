@@ -171,6 +171,7 @@ const AddNewDoctor = () => {
                   </span>
                 </div>
               </div>
+              <label htmlFor="dob">Date of Birth</label>
               <input
               type="date"
               value={dob}
