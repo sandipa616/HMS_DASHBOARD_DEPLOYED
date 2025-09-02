@@ -170,24 +170,20 @@ const AddNewDoctor = () => {
                     required
                   />
                   <span
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                   </span>
                 </div>
               </div>
 
-              {/* ✅ DOB Input with proper width for all devices */}
-              <label htmlFor="dob">Date of Birth</label>
               <input
-                id="dob"
-                type="date"
+                type="text"
+                onFocus={(e) => (e.target.type = "date")}
+                placeholder="Date of Birth"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
                 required
-                style={{ width: "100%", minWidth: "150px" }}
               />
 
               <select

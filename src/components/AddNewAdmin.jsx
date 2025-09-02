@@ -33,8 +33,20 @@ const AddNewAdmin = () => {
     try {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
-        { firstName, lastName, email, phone, dob, gender, password, confirmPassword },
-        { withCredentials: true, headers: { "Content-Type": "application/json" } }
+        {
+          firstName,
+          lastName,
+          email,
+          phone,
+          dob,
+          gender,
+          password,
+          confirmPassword,
+        },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
       toast.success(data.message);
@@ -124,7 +136,9 @@ const AddNewAdmin = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
                 {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
@@ -132,11 +146,12 @@ const AddNewAdmin = () => {
 
           <div className="add-new-admin-row">
             <input
-              type="date"
+              type="text"
+              placeholder="Date of Birth"
+              onFocus={(e) => (e.target.type = "date")}
               value={dob}
               onChange={(e) => setDob(e.target.value)}
               required
-              style={{ width: "100%", minWidth: "150px" }}
             />
 
             <select
