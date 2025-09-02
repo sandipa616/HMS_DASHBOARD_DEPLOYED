@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./AddNewDoctor.css";
+
 const AddNewDoctor = () => {
   const { isAuthenticated } = useContext(Context);
 
@@ -37,6 +38,7 @@ const AddNewDoctor = () => {
     "Gynecology",
     "Odontology",
   ];
+
   const handleAvatar = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -66,6 +68,7 @@ const AddNewDoctor = () => {
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
       formData.append("docAvatar", docAvatar);
+
       const response = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
         formData,
@@ -86,8 +89,11 @@ const AddNewDoctor = () => {
       setGender("");
       setPassword("");
       setConfirmPassword("");
+      setDoctorDepartment("");
+      setDocAvatar("");
+      setDocAvatarPreview("");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -105,13 +111,12 @@ const AddNewDoctor = () => {
           <div className="first-wrapper">
             <div className="avatar-section">
               <img
-                src={
-                  docAvatarPreview ? `${docAvatarPreview}` : "/docHolder.jpg"
-                }
+                src={docAvatarPreview ? docAvatarPreview : "/docHolder.jpg"}
                 alt="Doctor Avatar"
               />
               <input type="file" onChange={handleAvatar} />
             </div>
+
             <div className="form-section">
               <input
                 type="text"
@@ -134,7 +139,6 @@ const AddNewDoctor = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-
               <input
                 type="tel"
                 placeholder="Phone"
@@ -142,6 +146,7 @@ const AddNewDoctor = () => {
                 onChange={(e) => setPhone(e.target.value)}
                 required
               />
+
               <div className="add-new-doctor-password-row">
                 <div className="add-new-doctor-password-input">
                   <input
@@ -165,19 +170,26 @@ const AddNewDoctor = () => {
                     required
                   />
                   <span
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
                   >
                     {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                   </span>
                 </div>
               </div>
+
+              {/* ✅ DOB Input with proper width for all devices */}
               <label htmlFor="dob">Date of Birth</label>
               <input
-              type="date"
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
-              required
-            />
+                id="dob"
+                type="date"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                required
+                style={{ width: "100%", minWidth: "150px" }}
+              />
+
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
@@ -190,19 +202,16 @@ const AddNewDoctor = () => {
 
               <select
                 value={doctorDepartment}
-                onChange={(e) => {
-                  setDoctorDepartment(e.target.value);
-                }}
+                onChange={(e) => setDoctorDepartment(e.target.value)}
               >
                 <option value="">Select Department</option>
-                {departmentsArray.map((depart, index) => {
-                  return (
-                    <option value={depart} key={index}>
-                      {depart}
-                    </option>
-                  );
-                })}
+                {departmentsArray.map((depart, index) => (
+                  <option value={depart} key={index}>
+                    {depart}
+                  </option>
+                ))}
               </select>
+
               <button type="submit">Add New Doctor</button>
             </div>
           </div>

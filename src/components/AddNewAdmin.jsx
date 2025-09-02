@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./AddNewAdmin.css";
+
 const AddNewAdmin = () => {
   const { isAuthenticated } = useContext(Context);
 
@@ -20,6 +21,7 @@ const AddNewAdmin = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigateTo = useNavigate();
+
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
@@ -31,20 +33,8 @@ const AddNewAdmin = () => {
     try {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
-        {
-          firstName,
-          lastName,
-          email,
-          phone,
-          dob,
-          gender,
-          password,
-          confirmPassword,
-        },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
+        { firstName, lastName, email, phone, dob, gender, password, confirmPassword },
+        { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
 
       toast.success(data.message);
@@ -59,13 +49,11 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" />;
 
   return (
     <div className="add-new-admin-wrapper">
@@ -83,6 +71,7 @@ const AddNewAdmin = () => {
               required
             />
           </div>
+
           <div className="add-new-admin-row">
             <input
               type="text"
@@ -92,6 +81,7 @@ const AddNewAdmin = () => {
               required
             />
           </div>
+
           <div className="add-new-admin-row">
             <input
               type="email"
@@ -101,6 +91,7 @@ const AddNewAdmin = () => {
               required
             />
           </div>
+
           <div className="add-new-admin-row">
             <input
               type="tel"
@@ -133,30 +124,19 @@ const AddNewAdmin = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
+              <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                 {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
           </div>
 
           <div className="add-new-admin-row">
-            <label
-              htmlFor="dob"
-              style={{
-                fontSize: "14px",
-                marginBottom: "4px",
-                display: "block",
-              }}
-            >
-              Date of Birth
-            </label>
             <input
               type="date"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
               required
+              style={{ width: "100%", minWidth: "150px" }}
             />
 
             <select
