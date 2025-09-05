@@ -8,7 +8,6 @@ import "./AddNewAdmin.css";
 
 const AddNewAdmin = () => {
   const { isAuthenticated } = useContext(Context);
-  const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -21,14 +20,15 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const navigateTo = useNavigate();
+
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // Backend regex validations
-    const nameRegex = /^[A-Za-z ]{3,}$/; // First/Last Name
-    const phoneRegex = /^\d{10}$/; // Phone
-    const passwordRegex = /^.{8,}$/; // Password min 8 chars
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email
+    // Frontend regex validation to match backend
+    const nameRegex = /^[A-Za-z ]{3,}$/;
+    const phoneRegex = /^\d{10}$/;
+    const passwordRegex = /^.{8,}$/;
 
     if (!nameRegex.test(firstName)) {
       return toast.error(
@@ -42,9 +42,7 @@ const AddNewAdmin = () => {
       );
     }
 
-    if (!emailRegex.test(email)) {
-      return toast.error("Provide a valid email!");
-    }
+    // Email validation handled by HTML input type="email"
 
     if (!phoneRegex.test(phone)) {
       return toast.error("Phone number must contain exactly 10 digits!");
@@ -63,9 +61,19 @@ const AddNewAdmin = () => {
     }
 
     try {
+      // Send POST request with role included
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
-        { firstName, lastName, email, phone, dob, gender, password },
+        {
+          firstName,
+          lastName,
+          email,
+          phone,
+          dob,
+          gender,
+          password,
+          role: "Admin", // required by backend
+        },
         {
           withCredentials: true,
           headers: { "Content-Type": "application/json" },
@@ -85,6 +93,7 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
+      console.log(error.response?.data); // helpful for debugging
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };

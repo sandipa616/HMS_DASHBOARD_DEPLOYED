@@ -52,11 +52,10 @@ const AddNewDoctor = () => {
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
-    // Backend regex validation
+    // Frontend regex validation
     const nameRegex = /^[A-Za-z ]{3,}$/;
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!nameRegex.test(firstName)) {
       return toast.error(
@@ -68,10 +67,6 @@ const AddNewDoctor = () => {
       return toast.error(
         "Last Name must contain only letters and at least 3 characters"
       );
-    }
-
-    if (!emailRegex.test(email)) {
-      return toast.error("Provide a valid email!");
     }
 
     if (!phoneRegex.test(phone)) {
@@ -104,6 +99,7 @@ const AddNewDoctor = () => {
       formData.append("dob", dob);
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
+      formData.append("role", "Doctor"); // required by backend
       formData.append("docAvatar", docAvatar);
 
       const response = await axios.post(
@@ -131,6 +127,7 @@ const AddNewDoctor = () => {
       setDocAvatar("");
       setDocAvatarPreview("");
     } catch (error) {
+      console.log(error.response?.data); // for debugging
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
