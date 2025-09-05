@@ -8,7 +8,6 @@ import "./AddNewDoctor.css";
 
 const AddNewDoctor = () => {
   const { isAuthenticated } = useContext(Context);
-  const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -21,8 +20,10 @@ const AddNewDoctor = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [doctorDepartment, setDoctorDepartment] = useState("");
-  const [docAvatar, setDocAvatar] = useState(null);
+  const [docAvatar, setDocAvatar] = useState("");
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
+
+  const navigateTo = useNavigate();
 
   const departmentsArray = [
     "Pediatrics",
@@ -38,16 +39,8 @@ const AddNewDoctor = () => {
     "Odontology",
   ];
 
-  const nameRegex = /^[A-Za-z ]+$/;
-  const phoneRegex = /^\d{10}$/;
-
   const handleAvatar = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast.error("Avatar must be an image file");
-      return;
-    }
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
@@ -59,60 +52,22 @@ const AddNewDoctor = () => {
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
-    // Frontend Validations
-    if (!nameRegex.test(firstName.trim()) || firstName.trim().length < 3) {
-      toast.error("First Name must be at least 3 characters and only letters.");
-      return;
-    }
-    if (!nameRegex.test(lastName.trim()) || lastName.trim().length < 3) {
-      toast.error("Last Name must be at least 3 characters and only letters.");
-      return;
-    }
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-      toast.error("Please enter a valid email.");
-      return;
-    }
-    if (!phoneRegex.test(phone.trim())) {
-      toast.error("Phone number must be exactly 10 digits.");
-      return;
-    }
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters long.");
-      return;
-    }
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
-      return;
-    }
-    if (!gender) {
-      toast.error("Please select a gender.");
-      return;
-    }
-    if (!dob) {
-      toast.error("Please select Date of Birth.");
-      return;
-    }
-    if (!doctorDepartment) {
-      toast.error("Please select a department.");
-      return;
-    }
-    if (!docAvatar) {
-      toast.error("Please upload a doctor avatar.");
       return;
     }
 
     try {
       const formData = new FormData();
-      formData.append("firstName", firstName.trim());
-      formData.append("lastName", lastName.trim());
-      formData.append("email", email.trim());
-      formData.append("phone", phone.trim());
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("password", password);
       formData.append("dob", dob);
       formData.append("gender", gender);
-      formData.append("password", password);
       formData.append("doctorDepartment", doctorDepartment);
       formData.append("docAvatar", docAvatar);
-      formData.append("role", "Doctor"); // explicitly set role
 
       const response = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
@@ -126,7 +81,6 @@ const AddNewDoctor = () => {
       toast.success(response.data.message);
       navigateTo("/");
 
-      // Clear form
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -136,15 +90,16 @@ const AddNewDoctor = () => {
       setPassword("");
       setConfirmPassword("");
       setDoctorDepartment("");
-      setDocAvatar(null);
+      setDocAvatar("");
       setDocAvatarPreview("");
     } catch (error) {
-      console.error("Add New Doctor Error:", error.response || error);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
-  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div className="add-new-doctor-wrapper">
@@ -156,10 +111,10 @@ const AddNewDoctor = () => {
           <div className="first-wrapper">
             <div className="avatar-section">
               <img
-                src={docAvatarPreview || "/docHolder.jpg"}
+                src={docAvatarPreview ? docAvatarPreview : "/docHolder.jpg"}
                 alt="Doctor Avatar"
               />
-              <input type="file" onChange={handleAvatar} required />
+              <input type="file" onChange={handleAvatar} />
             </div>
 
             <div className="form-section">
@@ -223,7 +178,8 @@ const AddNewDoctor = () => {
               </div>
 
               <input
-                type="date"
+                type="text"
+                onFocus={(e) => (e.target.type = "date")}
                 placeholder="Date of Birth"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
@@ -243,11 +199,10 @@ const AddNewDoctor = () => {
               <select
                 value={doctorDepartment}
                 onChange={(e) => setDoctorDepartment(e.target.value)}
-                required
               >
                 <option value="">Select Department</option>
-                {departmentsArray.map((depart, idx) => (
-                  <option key={idx} value={depart}>
+                {departmentsArray.map((depart, index) => (
+                  <option value={depart} key={index}>
                     {depart}
                   </option>
                 ))}
@@ -262,4 +217,4 @@ const AddNewDoctor = () => {
   );
 };
 
-export default AddNewDoctor;
+export default AddNewDoctor; 

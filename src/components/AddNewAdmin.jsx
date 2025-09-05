@@ -8,7 +8,6 @@ import "./AddNewAdmin.css";
 
 const AddNewAdmin = () => {
   const { isAuthenticated } = useContext(Context);
-  const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -21,50 +20,13 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const navigateTo = useNavigate();
+
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // Frontend Validations
-    const nameRegex = /^[A-Za-z ]+$/;
-    const phoneRegex = /^\d{10}$/;
-
-    if (!nameRegex.test(firstName.trim()) || firstName.trim().length < 3) {
-      toast.error("First Name must be at least 3 characters and only letters.");
-      return;
-    }
-
-    if (!nameRegex.test(lastName.trim()) || lastName.trim().length < 3) {
-      toast.error("Last Name must be at least 3 characters and only letters.");
-      return;
-    }
-
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-      toast.error("Please enter a valid email.");
-      return;
-    }
-
-    if (!phoneRegex.test(phone.trim())) {
-      toast.error("Phone number must be exactly 10 digits.");
-      return;
-    }
-
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters long.");
-      return;
-    }
-
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
-      return;
-    }
-
-    if (!dob) {
-      toast.error("Please select Date of Birth.");
-      return;
-    }
-
-    if (!gender) {
-      toast.error("Please select Gender.");
       return;
     }
 
@@ -72,15 +34,14 @@ const AddNewAdmin = () => {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
         {
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
+          firstName,
+          lastName,
+          email,
+          phone,
           dob,
           gender,
           password,
           confirmPassword,
-          role: "Admin", // explicitly send role
         },
         {
           withCredentials: true,
@@ -89,9 +50,8 @@ const AddNewAdmin = () => {
       );
 
       toast.success(data.message);
-      navigateTo("/"); // redirect after success
+      navigateTo("/");
 
-      // Clear form
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -101,7 +61,6 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      console.error(error.response?.data); // see full backend error
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
@@ -187,8 +146,9 @@ const AddNewAdmin = () => {
 
           <div className="add-new-admin-row">
             <input
-              type="date"
+              type="text"
               placeholder="Date of Birth"
+              onFocus={(e) => (e.target.type = "date")}
               value={dob}
               onChange={(e) => setDob(e.target.value)}
               required
