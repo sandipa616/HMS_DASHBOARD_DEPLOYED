@@ -21,23 +21,28 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Helper to show error toasts (longer duration)
-  const showToast = (message, type = "error") => {
+  // Inline message state
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // "success" or "error"
+
+  // Helper to show toast and inline message
+  const showToast = (msg, type = "error") => {
+    setMessage(msg);
+    setMessageType(type);
     window.scrollTo({ top: 0, behavior: "smooth" });
+
     type === "success"
-      ? toast.success(message, { autoClose: 2000, position: "top-center" })
-      : toast.error(message, { autoClose: 5000, position: "top-center" });
+      ? toast.success(msg, { autoClose: 2000, position: "top-center" })
+      : toast.error(msg, { autoClose: 5000, position: "top-center" });
   };
 
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // Frontend validation regex
     const nameRegex = /^[A-Za-z ]{3,}$/;
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
-    // Validation
     if (!nameRegex.test(firstName))
       return showToast(
         "First Name must contain only letters and at least 3 characters"
@@ -79,14 +84,7 @@ const AddNewAdmin = () => {
         }
       );
 
-      // ✅ Success toast at top-center, auto-close after 2s, then redirect
-      toast.success(data.message, {
-        autoClose: 2000,
-        position: "top-center",
-        onClose: () => {
-          navigateTo("/");
-        },
-      });
+      showToast(data.message, "success");
 
       // Reset form
       setFirstName("");
@@ -97,9 +95,11 @@ const AddNewAdmin = () => {
       setGender("");
       setPassword("");
       setConfirmPassword("");
+
+      // Redirect after 2 seconds
+      setTimeout(() => navigateTo("/"), 2000);
     } catch (error) {
-      // Show error toast immediately
-      showToast(error.response?.data?.message || "Something went wrong");
+      showToast(error.response?.data?.message || "Something went wrong", "error");
     }
   };
 
@@ -110,6 +110,20 @@ const AddNewAdmin = () => {
       <div className="add-new-admin-box">
         <img src="/logo.png" alt="logo" className="add-new-admin-logo" />
         <h1 className="admin-form-title">ADD NEW ADMIN</h1>
+
+        {/* Inline message */}
+        {message && (
+          <p
+            style={{
+              textAlign: "center",
+              color: messageType === "success" ? "green" : "red",
+              marginBottom: "15px",
+              fontWeight: "500",
+            }}
+          >
+            {message}
+          </p>
+        )}
 
         <form onSubmit={handleAddNewAdmin} className="add-new-admin-form">
           <div className="add-new-admin-row">
