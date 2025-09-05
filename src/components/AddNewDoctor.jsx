@@ -52,9 +52,46 @@ const AddNewDoctor = () => {
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
+    // Backend regex validation
+    const nameRegex = /^[A-Za-z ]{3,}$/;
+    const phoneRegex = /^\d{10}$/;
+    const passwordRegex = /^.{8,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!nameRegex.test(firstName)) {
+      return toast.error(
+        "First Name must contain only letters and at least 3 characters"
+      );
+    }
+
+    if (!nameRegex.test(lastName)) {
+      return toast.error(
+        "Last Name must contain only letters and at least 3 characters"
+      );
+    }
+
+    if (!emailRegex.test(email)) {
+      return toast.error("Provide a valid email!");
+    }
+
+    if (!phoneRegex.test(phone)) {
+      return toast.error("Phone number must contain exactly 10 digits!");
+    }
+
+    if (!passwordRegex.test(password)) {
+      return toast.error("Password must be at least 8 characters!");
+    }
+
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
+      return toast.error("Passwords do not match!");
+    }
+
+    if (!["Male", "Female"].includes(gender)) {
+      return toast.error("Please select a valid gender!");
+    }
+
+    if (!doctorDepartment) {
+      return toast.error("Please select a department!");
     }
 
     try {
@@ -81,6 +118,7 @@ const AddNewDoctor = () => {
       toast.success(response.data.message);
       navigateTo("/");
 
+      // Reset form
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -199,6 +237,7 @@ const AddNewDoctor = () => {
               <select
                 value={doctorDepartment}
                 onChange={(e) => setDoctorDepartment(e.target.value)}
+                required
               >
                 <option value="">Select Department</option>
                 {departmentsArray.map((depart, index) => (
@@ -217,4 +256,4 @@ const AddNewDoctor = () => {
   );
 };
 
-export default AddNewDoctor; 
+export default AddNewDoctor;

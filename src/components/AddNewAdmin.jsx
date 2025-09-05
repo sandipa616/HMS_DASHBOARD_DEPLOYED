@@ -8,6 +8,7 @@ import "./AddNewAdmin.css";
 
 const AddNewAdmin = () => {
   const { isAuthenticated } = useContext(Context);
+  const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -20,29 +21,51 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const navigateTo = useNavigate();
-
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
+    // Backend regex validations
+    const nameRegex = /^[A-Za-z ]{3,}$/; // First/Last Name
+    const phoneRegex = /^\d{10}$/; // Phone
+    const passwordRegex = /^.{8,}$/; // Password min 8 chars
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email
+
+    if (!nameRegex.test(firstName)) {
+      return toast.error(
+        "First Name must contain only letters and at least 3 characters"
+      );
+    }
+
+    if (!nameRegex.test(lastName)) {
+      return toast.error(
+        "Last Name must contain only letters and at least 3 characters"
+      );
+    }
+
+    if (!emailRegex.test(email)) {
+      return toast.error("Provide a valid email!");
+    }
+
+    if (!phoneRegex.test(phone)) {
+      return toast.error("Phone number must contain exactly 10 digits!");
+    }
+
+    if (!passwordRegex.test(password)) {
+      return toast.error("Password must be at least 8 characters!");
+    }
+
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
+      return toast.error("Passwords do not match!");
+    }
+
+    if (!["Male", "Female"].includes(gender)) {
+      return toast.error("Please select a valid gender!");
     }
 
     try {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
-        {
-          firstName,
-          lastName,
-          email,
-          phone,
-          dob,
-          gender,
-          password,
-          confirmPassword,
-        },
+        { firstName, lastName, email, phone, dob, gender, password },
         {
           withCredentials: true,
           headers: { "Content-Type": "application/json" },
@@ -52,6 +75,7 @@ const AddNewAdmin = () => {
       toast.success(data.message);
       navigateTo("/");
 
+      // Reset form
       setFirstName("");
       setLastName("");
       setEmail("");
