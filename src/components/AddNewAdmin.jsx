@@ -76,8 +76,8 @@ const AddNewAdmin = () => {
         }
       );
 
+      // Show success immediately
       showToast(data.message, "success");
-      navigateTo("/");
 
       // Reset form
       setFirstName("");
@@ -88,6 +88,9 @@ const AddNewAdmin = () => {
       setGender("");
       setPassword("");
       setConfirmPassword("");
+
+      // Delay redirect so toast is visible
+      setTimeout(() => navigateTo("/"), 1500);
     } catch (error) {
       console.log(error.response?.data);
       showToast(error.response?.data?.message || "Something went wrong");

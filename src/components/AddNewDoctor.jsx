@@ -101,8 +101,8 @@ const AddNewDoctor = () => {
         }
       );
 
+      // Show success toast
       showToast(response.data.message, "success");
-      navigateTo("/");
 
       // Reset form
       setFirstName("");
@@ -116,6 +116,9 @@ const AddNewDoctor = () => {
       setDoctorDepartment("");
       setDocAvatar("");
       setDocAvatarPreview("");
+
+      // Delay redirect so toast is visible
+      setTimeout(() => navigateTo("/"), 1500);
     } catch (error) {
       console.log(error.response?.data);
       showToast(error.response?.data?.message || "Something went wrong");
