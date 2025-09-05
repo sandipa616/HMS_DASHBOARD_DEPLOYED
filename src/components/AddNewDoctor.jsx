@@ -21,7 +21,7 @@ const AddNewDoctor = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [doctorDepartment, setDoctorDepartment] = useState("");
-  const [docAvatar, setDocAvatar] = useState("");
+  const [docAvatar, setDocAvatar] = useState(null);
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
 
   const departmentsArray = [
@@ -38,7 +38,6 @@ const AddNewDoctor = () => {
     "Odontology",
   ];
 
-  // Regex for validation
   const nameRegex = /^[A-Za-z ]+$/;
   const phoneRegex = /^\d{10}$/;
 
@@ -59,22 +58,21 @@ const AddNewDoctor = () => {
 
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
-    console.log("Form submitted"); // Debug
 
     // Frontend Validations
-    if (!nameRegex.test(firstName) || firstName.length < 3) {
+    if (!nameRegex.test(firstName.trim()) || firstName.trim().length < 3) {
       toast.error("First Name must be at least 3 characters and only letters.");
       return;
     }
-    if (!nameRegex.test(lastName) || lastName.length < 3) {
+    if (!nameRegex.test(lastName.trim()) || lastName.trim().length < 3) {
       toast.error("Last Name must be at least 3 characters and only letters.");
       return;
     }
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
       toast.error("Please enter a valid email.");
       return;
     }
-    if (!phoneRegex.test(phone)) {
+    if (!phoneRegex.test(phone.trim())) {
       toast.error("Phone number must be exactly 10 digits.");
       return;
     }
@@ -105,17 +103,16 @@ const AddNewDoctor = () => {
 
     try {
       const formData = new FormData();
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-      formData.append("email", email);
-      formData.append("phone", phone);
-      formData.append("password", password);
+      formData.append("firstName", firstName.trim());
+      formData.append("lastName", lastName.trim());
+      formData.append("email", email.trim());
+      formData.append("phone", phone.trim());
       formData.append("dob", dob);
       formData.append("gender", gender);
+      formData.append("password", password);
       formData.append("doctorDepartment", doctorDepartment);
       formData.append("docAvatar", docAvatar);
-
-      console.log("Sending request to backend...");
+      formData.append("role", "Doctor"); // explicitly set role
 
       const response = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
@@ -126,9 +123,7 @@ const AddNewDoctor = () => {
         }
       );
 
-      console.log("Response:", response.data);
       toast.success(response.data.message);
-
       navigateTo("/");
 
       // Clear form
@@ -141,17 +136,15 @@ const AddNewDoctor = () => {
       setPassword("");
       setConfirmPassword("");
       setDoctorDepartment("");
-      setDocAvatar("");
+      setDocAvatar(null);
       setDocAvatarPreview("");
     } catch (error) {
-      console.error("Error:", error.response || error);
+      console.error("Add New Doctor Error:", error.response || error);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" />;
 
   return (
     <div className="add-new-doctor-wrapper">
@@ -163,10 +156,10 @@ const AddNewDoctor = () => {
           <div className="first-wrapper">
             <div className="avatar-section">
               <img
-                src={docAvatarPreview ? docAvatarPreview : "/docHolder.jpg"}
+                src={docAvatarPreview || "/docHolder.jpg"}
                 alt="Doctor Avatar"
               />
-              <input type="file" onChange={handleAvatar} />
+              <input type="file" onChange={handleAvatar} required />
             </div>
 
             <div className="form-section">
@@ -222,9 +215,7 @@ const AddNewDoctor = () => {
                     required
                   />
                   <span
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                   </span>
@@ -255,8 +246,8 @@ const AddNewDoctor = () => {
                 required
               >
                 <option value="">Select Department</option>
-                {departmentsArray.map((depart, index) => (
-                  <option value={depart} key={index}>
+                {departmentsArray.map((depart, idx) => (
+                  <option key={idx} value={depart}>
                     {depart}
                   </option>
                 ))}
