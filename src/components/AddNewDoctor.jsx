@@ -22,7 +22,7 @@ const AddNewDoctor = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [doctorDepartment, setDoctorDepartment] = useState("");
   const [docAvatar, setDocAvatar] = useState("");
-  const [docAvatarPreview, setDocAvatarPreview] = useState("/docHolder.jpg");
+  const [docAvatarPreview, setDocAvatarPreview] = useState("");
 
   const departmentsArray = [
     "Pediatrics",
@@ -40,11 +40,7 @@ const AddNewDoctor = () => {
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      setDocAvatarPreview("/docHolder.jpg");
-      setDocAvatar("");
-      return;
-    }
+    if (!file) return;
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
@@ -53,37 +49,45 @@ const AddNewDoctor = () => {
     };
   };
 
-  const showToast = (message, type = "error") => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    type === "success"
-      ? toast.success(message, { autoClose: 2000, position: "top-center" })
-      : toast.error(message, { autoClose: 5000, position: "top-center" });
-  };
-
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
-    const nameRegex = /^[A-Za-z ]{3,}$/;
-    const phoneRegex = /^\d{10}$/;
-    const passwordRegex = /^.{8,}$/;
-
-    if (!nameRegex.test(firstName))
-      return showToast(
-        "First Name must contain only letters and at least 3 characters"
-      );
-    if (!nameRegex.test(lastName))
-      return showToast(
-        "Last Name must contain only letters and at least 3 characters"
-      );
-    if (!phoneRegex.test(phone))
-      return showToast("Phone number must contain exactly 10 digits!");
-    if (!passwordRegex.test(password))
-      return showToast("Password must be at least 8 characters!");
+    // Validation
+    if (!/^[A-Za-z ]{3,}$/.test(firstName))
+      return toast.error("First Name must contain at least 3 letters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!/^[A-Za-z ]{3,}$/.test(lastName))
+      return toast.error("Last Name must contain at least 3 letters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!/^\d{10}$/.test(phone))
+      return toast.error("Phone number must contain exactly 10 digits", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (password.length < 8)
+      return toast.error("Password must be at least 8 characters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
     if (password !== confirmPassword)
-      return showToast("Passwords do not match!");
+      return toast.error("Passwords do not match", {
+        autoClose: 5000,
+        position: "top-center",
+      });
     if (!["Male", "Female"].includes(gender))
-      return showToast("Please select a valid gender!");
-    if (!doctorDepartment) return showToast("Please select a department!");
+      return toast.error("Please select a valid gender", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!doctorDepartment)
+      return toast.error("Please select a department", {
+        autoClose: 5000,
+        position: "top-center",
+      });
 
     try {
       const formData = new FormData();
@@ -107,12 +111,12 @@ const AddNewDoctor = () => {
         }
       );
 
+      // Show success toast immediately, then navigate
       toast.success(data.message, {
         autoClose: 2000,
         position: "top-center",
-        onClose: () => {
-          navigateTo("/");
-        },
+        pauseOnHover: false,
+        onClose: () => navigateTo("/"),
       });
 
       // Reset form
@@ -126,9 +130,12 @@ const AddNewDoctor = () => {
       setConfirmPassword("");
       setDoctorDepartment("");
       setDocAvatar("");
-      setDocAvatarPreview("/docHolder.jpg");
+      setDocAvatarPreview("");
     } catch (error) {
-      showToast(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong", {
+        autoClose: 5000,
+        position: "top-center",
+      });
     }
   };
 
@@ -142,7 +149,10 @@ const AddNewDoctor = () => {
         <form onSubmit={handleAddNewDoctor} className="add-new-doctor-form">
           <div className="first-wrapper">
             <div className="avatar-section">
-              <img src={docAvatarPreview} alt="Doctor Avatar" />
+              <img
+                src={docAvatarPreview || "/docHolder.jpg"}
+                alt="Doctor Avatar"
+              />
               <input type="file" onChange={handleAvatar} />
             </div>
             <div className="form-section">
@@ -197,9 +207,7 @@ const AddNewDoctor = () => {
                     required
                   />
                   <span
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                   </span>
@@ -214,7 +222,6 @@ const AddNewDoctor = () => {
                 onChange={(e) => setDob(e.target.value)}
                 required
               />
-
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}

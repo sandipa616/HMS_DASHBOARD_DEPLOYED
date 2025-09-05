@@ -21,37 +21,40 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const showToast = (message, type = "error") => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    type === "success"
-      ? toast.success(message, { autoClose: 2000, position: "top-center" })
-      : toast.error(message, { autoClose: 5000, position: "top-center" });
-  };
-
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // Frontend validation
-    const nameRegex = /^[A-Za-z ]{3,}$/;
-    const phoneRegex = /^\d{10}$/;
-    const passwordRegex = /^.{8,}$/;
-
-    if (!nameRegex.test(firstName))
-      return showToast(
-        "First Name must contain only letters and at least 3 characters"
-      );
-    if (!nameRegex.test(lastName))
-      return showToast(
-        "Last Name must contain only letters and at least 3 characters"
-      );
-    if (!phoneRegex.test(phone))
-      return showToast("Phone number must contain exactly 10 digits!");
-    if (!passwordRegex.test(password))
-      return showToast("Password must be at least 8 characters!");
+    // Validation
+    if (!/^[A-Za-z ]{3,}$/.test(firstName))
+      return toast.error("First Name must contain at least 3 letters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!/^[A-Za-z ]{3,}$/.test(lastName))
+      return toast.error("Last Name must contain at least 3 letters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!/^\d{10}$/.test(phone))
+      return toast.error("Phone number must contain exactly 10 digits", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (password.length < 8)
+      return toast.error("Password must be at least 8 characters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
     if (password !== confirmPassword)
-      return showToast("Passwords do not match!");
+      return toast.error("Passwords do not match", {
+        autoClose: 5000,
+        position: "top-center",
+      });
     if (!["Male", "Female"].includes(gender))
-      return showToast("Please select a valid gender!");
+      return toast.error("Please select a valid gender", {
+        autoClose: 5000,
+        position: "top-center",
+      });
 
     try {
       const { data } = await axios.post(
@@ -72,10 +75,11 @@ const AddNewAdmin = () => {
         }
       );
 
-      // Success toast + redirect after toast closes
+      // Success toast: appear immediately, redirect after 2s
       toast.success(data.message, {
         autoClose: 2000,
         position: "top-center",
+        pauseOnHover: false,
         onClose: () => navigateTo("/"),
       });
 
@@ -89,7 +93,10 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      showToast(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong", {
+        autoClose: 5000,
+        position: "top-center",
+      });
     }
   };
 
