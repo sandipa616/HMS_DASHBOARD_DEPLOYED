@@ -24,14 +24,18 @@ const AddNewDoctor = () => {
   const [docAvatar, setDocAvatar] = useState("");
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
 
-  // Inline message state
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // "success" or "error"
-
   const departmentsArray = [
-    "Pediatrics","Orthopedics","Cardiology","Neurology","Oncology",
-    "Radiology","Physiotherapy","Dermatology","Opthalmology",
-    "Gynecology","Odontology"
+    "Pediatrics",
+    "Orthopedics",
+    "Cardiology",
+    "Neurology",
+    "Oncology",
+    "Radiology",
+    "Physiotherapy",
+    "Dermatology",
+    "Opthalmology",
+    "Gynecology",
+    "Odontology",
   ];
 
   const handleAvatar = (e) => {
@@ -45,15 +49,12 @@ const AddNewDoctor = () => {
     };
   };
 
-  // Show toast and inline message
-  const showToast = (msg, type = "error") => {
-    setMessage(msg);
-    setMessageType(type);
+  // Toast helper (centered, different timing for success vs error)
+  const showToast = (message, type = "error") => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-
     type === "success"
-      ? toast.success(msg, { autoClose: 2000, position: "top-center" })
-      : toast.error(msg, { autoClose: 5000, position: "top-center" });
+      ? toast.success(message, { autoClose: 2000, position: "top-center" })
+      : toast.error(message, { autoClose: 5000, position: "top-center" });
   };
 
   const handleAddNewDoctor = async (e) => {
@@ -63,6 +64,7 @@ const AddNewDoctor = () => {
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
+    // Validation
     if (!nameRegex.test(firstName))
       return showToast(
         "First Name must contain only letters and at least 3 characters"
@@ -97,19 +99,35 @@ const AddNewDoctor = () => {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
         formData,
-        { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
-      showToast(data.message, "success");
+      // ✅ Success toast at top-center, auto-close in 2s, then redirect
+      toast.success(data.message, {
+        autoClose: 2000,
+        position: "top-center",
+        onClose: () => {
+          navigateTo("/");
+        },
+      });
 
       // Reset form
-      setFirstName(""); setLastName(""); setEmail(""); setPhone("");
-      setDob(""); setGender(""); setPassword(""); setConfirmPassword("");
-      setDoctorDepartment(""); setDocAvatar(""); setDocAvatarPreview("");
-
-      setTimeout(() => navigateTo("/"), 2000);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setDob("");
+      setGender("");
+      setPassword("");
+      setConfirmPassword("");
+      setDoctorDepartment("");
+      setDocAvatar("");
+      setDocAvatarPreview("");
     } catch (error) {
-      showToast(error.response?.data?.message || "Something went wrong", "error");
+      showToast(error.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -120,56 +138,103 @@ const AddNewDoctor = () => {
       <div className="add-new-doctor-box">
         <img src="/logo.png" alt="logo" className="add-new-doctor-logo" />
         <h1 className="doctor-form-title">ADD NEW DOCTOR</h1>
-
-        {/* Inline message */}
-        {message && (
-          <p
-            style={{
-              textAlign: "center",
-              color: messageType === "success" ? "green" : "red",
-              marginBottom: "15px",
-              fontWeight: "500",
-            }}
-          >
-            {message}
-          </p>
-        )}
-
         <form onSubmit={handleAddNewDoctor} className="add-new-doctor-form">
           <div className="first-wrapper">
             <div className="avatar-section">
-              <img src={docAvatarPreview || "/docHolder.jpg"} alt="Doctor Avatar" />
+              <img
+                src={docAvatarPreview || "/docHolder.jpg"}
+                alt="Doctor Avatar"
+              />
               <input type="file" onChange={handleAvatar} />
             </div>
             <div className="form-section">
-              <input type="text" placeholder="First Name" value={firstName} onChange={(e)=>setFirstName(e.target.value)} required />
-              <input type="text" placeholder="Last Name" value={lastName} onChange={(e)=>setLastName(e.target.value)} required />
-              <input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} required />
-              <input type="tel" placeholder="Phone" value={phone} onChange={(e)=>setPhone(e.target.value)} required />
+              <input
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <input
+                type="tel"
+                placeholder="Phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
 
               <div className="add-new-doctor-password-row">
                 <div className="add-new-doctor-password-input">
-                  <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
-                  <span onClick={()=>setShowPassword(!showPassword)}>{showPassword ? <FaEye/> : <FaEyeSlash/>}</span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <span onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
+                  </span>
                 </div>
                 <div className="add-new-doctor-password-input">
-                  <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required />
-                  <span onClick={()=>setShowConfirmPassword(!showConfirmPassword)}>{showConfirmPassword ? <FaEye/> : <FaEyeSlash/>}</span>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                  <span
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                  </span>
                 </div>
               </div>
 
-              <input type="text" onFocus={(e)=>e.target.type="date"} placeholder="Date of Birth" value={dob} onChange={(e)=>setDob(e.target.value)} required />
-              
-              <select value={gender} onChange={(e)=>setGender(e.target.value)} required>
+              <input
+                type="text"
+                onFocus={(e) => (e.target.type = "date")}
+                placeholder="Date of Birth"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                required
+              />
+
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
+              >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
 
-              <select value={doctorDepartment} onChange={(e)=>setDoctorDepartment(e.target.value)} required>
+              <select
+                value={doctorDepartment}
+                onChange={(e) => setDoctorDepartment(e.target.value)}
+                required
+              >
                 <option value="">Select Department</option>
-                {departmentsArray.map((depart, i)=>(
-                  <option key={i} value={depart}>{depart}</option>
+                {departmentsArray.map((depart, index) => (
+                  <option key={index} value={depart}>
+                    {depart}
+                  </option>
                 ))}
               </select>
 
