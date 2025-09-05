@@ -25,49 +25,37 @@ const AddNewAdmin = () => {
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // ✅ Frontend validations
+    // 🔹 Frontend validations (instant feedback)
     const nameRegex = /^[A-Za-z ]+$/;
     const phoneRegex = /^\d{10}$/;
 
-    if (!nameRegex.test(firstName) || firstName.length < 3) {
-      toast.error("First Name must be at least 3 characters and only letters.");
-      return;
-    }
+    if (!nameRegex.test(firstName) || firstName.length < 3)
+      return toast.error(
+        "First Name must be at least 3 characters and only letters."
+      );
 
-    if (!nameRegex.test(lastName) || lastName.length < 3) {
-      toast.error("Last Name must be at least 3 characters and only letters.");
-      return;
-    }
+    if (!nameRegex.test(lastName) || lastName.length < 3)
+      return toast.error(
+        "Last Name must be at least 3 characters and only letters."
+      );
 
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      toast.error("Please enter a valid email.");
-      return;
-    }
+    if (!/^\S+@\S+\.\S+$/.test(email))
+      return toast.error("Please enter a valid email.");
 
-    if (!phoneRegex.test(phone)) {
-      toast.error("Phone number must be exactly 10 digits.");
-      return;
-    }
+    if (!phoneRegex.test(phone))
+      return toast.error("Phone number must be exactly 10 digits.");
 
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters long.");
-      return;
-    }
+    if (password.length < 8)
+      return toast.error("Password must be at least 8 characters long.");
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
-    }
+    if (password !== confirmPassword)
+      return toast.error("Passwords do not match!");
 
-    if (!dob) {
-      toast.error("Please select Date of Birth.");
-      return;
-    }
+    if (!dob) return toast.error("Please select Date of Birth.");
+    if (!gender) return toast.error("Please select Gender.");
 
-    if (!gender) {
-      toast.error("Please select Gender.");
-      return;
-    }
+    // 🔹 Optional: show processing toast
+    toast.info("Processing your request...");
 
     try {
       const { data } = await axios.post(
@@ -88,8 +76,8 @@ const AddNewAdmin = () => {
         }
       );
 
-      toast.success(data.message);
-      navigateTo("/");
+      toast.success(data.message); // Success message from backend
+      navigateTo("/"); // redirect if needed
 
       // Clear form
       setFirstName("");

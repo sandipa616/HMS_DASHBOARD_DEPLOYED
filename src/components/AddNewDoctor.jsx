@@ -44,7 +44,8 @@ const AddNewDoctor = () => {
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
-    if (file && !file.type.startsWith("image/")) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
       toast.error("Avatar must be an image file");
       return;
     }
@@ -58,50 +59,47 @@ const AddNewDoctor = () => {
 
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
+    console.log("Form submitted"); // Debug
 
     // Frontend Validations
     if (!nameRegex.test(firstName) || firstName.length < 3) {
       toast.error("First Name must be at least 3 characters and only letters.");
       return;
     }
-
     if (!nameRegex.test(lastName) || lastName.length < 3) {
       toast.error("Last Name must be at least 3 characters and only letters.");
       return;
     }
-
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       toast.error("Please enter a valid email.");
       return;
     }
-
     if (!phoneRegex.test(phone)) {
       toast.error("Phone number must be exactly 10 digits.");
       return;
     }
-
     if (password.length < 8) {
       toast.error("Password must be at least 8 characters long.");
       return;
     }
-
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
-
     if (!gender) {
       toast.error("Please select a gender.");
       return;
     }
-
     if (!dob) {
       toast.error("Please select Date of Birth.");
       return;
     }
-
     if (!doctorDepartment) {
       toast.error("Please select a department.");
+      return;
+    }
+    if (!docAvatar) {
+      toast.error("Please upload a doctor avatar.");
       return;
     }
 
@@ -115,7 +113,9 @@ const AddNewDoctor = () => {
       formData.append("dob", dob);
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
-      if (docAvatar) formData.append("docAvatar", docAvatar);
+      formData.append("docAvatar", docAvatar);
+
+      console.log("Sending request to backend...");
 
       const response = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
@@ -126,7 +126,9 @@ const AddNewDoctor = () => {
         }
       );
 
+      console.log("Response:", response.data);
       toast.success(response.data.message);
+
       navigateTo("/");
 
       // Clear form
@@ -142,6 +144,7 @@ const AddNewDoctor = () => {
       setDocAvatar("");
       setDocAvatarPreview("");
     } catch (error) {
+      console.error("Error:", error.response || error);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
