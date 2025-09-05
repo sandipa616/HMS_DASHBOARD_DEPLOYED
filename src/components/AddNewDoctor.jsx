@@ -52,6 +52,7 @@ const AddNewDoctor = () => {
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
+    // Validation
     if (!nameRegex.test(firstName))
       return showToast("First Name must contain only letters and at least 3 characters");
     if (!nameRegex.test(lastName))
@@ -85,7 +86,7 @@ const AddNewDoctor = () => {
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      // Success toast
+      // Show success toast immediately
       showToast(response.data.message, "success");
 
       // Reset form
@@ -93,10 +94,9 @@ const AddNewDoctor = () => {
       setDob(""); setGender(""); setPassword(""); setConfirmPassword("");
       setDoctorDepartment(""); setDocAvatar(""); setDocAvatarPreview("");
 
-      // Delay redirect so toast is visible
+      // Navigate after 1.5s
       setTimeout(() => navigateTo("/"), 1500);
     } catch (error) {
-      console.log(error.response?.data);
       showToast(error.response?.data?.message || "Something went wrong");
     }
   };

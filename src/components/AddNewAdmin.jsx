@@ -8,6 +8,7 @@ import "./AddNewAdmin.css";
 
 const AddNewAdmin = () => {
   const { isAuthenticated } = useContext(Context);
+  const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -20,8 +21,6 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const navigateTo = useNavigate();
-
   // Helper to show toast and scroll to top
   const showToast = (message, type = "error") => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -31,11 +30,12 @@ const AddNewAdmin = () => {
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // Frontend regex validation to match backend
+    // Frontend validation regex
     const nameRegex = /^[A-Za-z ]{3,}$/;
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
+    // Validation
     if (!nameRegex.test(firstName))
       return showToast(
         "First Name must contain only letters and at least 3 characters"
@@ -52,7 +52,8 @@ const AddNewAdmin = () => {
     if (!passwordRegex.test(password))
       return showToast("Password must be at least 8 characters!");
 
-    if (password !== confirmPassword) return showToast("Passwords do not match!");
+    if (password !== confirmPassword)
+      return showToast("Passwords do not match!");
 
     if (!["Male", "Female"].includes(gender))
       return showToast("Please select a valid gender!");
@@ -76,7 +77,7 @@ const AddNewAdmin = () => {
         }
       );
 
-      // Show success immediately
+      // Show success toast
       showToast(data.message, "success");
 
       // Reset form
@@ -89,10 +90,10 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
 
-      // Delay redirect so toast is visible
+      // Navigate after 1.5s so toast is visible
       setTimeout(() => navigateTo("/"), 1500);
     } catch (error) {
-      console.log(error.response?.data);
+      // Show error toast immediately
       showToast(error.response?.data?.message || "Something went wrong");
     }
   };
