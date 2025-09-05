@@ -22,6 +22,12 @@ const AddNewAdmin = () => {
 
   const navigateTo = useNavigate();
 
+  // Helper to show toast and scroll to top
+  const showToast = (message, type = "error") => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    type === "success" ? toast.success(message) : toast.error(message);
+  };
+
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
@@ -30,38 +36,28 @@ const AddNewAdmin = () => {
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
-    if (!nameRegex.test(firstName)) {
-      return toast.error(
+    if (!nameRegex.test(firstName))
+      return showToast(
         "First Name must contain only letters and at least 3 characters"
       );
-    }
 
-    if (!nameRegex.test(lastName)) {
-      return toast.error(
+    if (!nameRegex.test(lastName))
+      return showToast(
         "Last Name must contain only letters and at least 3 characters"
       );
-    }
 
-    // Email validation handled by HTML input type="email"
+    if (!phoneRegex.test(phone))
+      return showToast("Phone number must contain exactly 10 digits!");
 
-    if (!phoneRegex.test(phone)) {
-      return toast.error("Phone number must contain exactly 10 digits!");
-    }
+    if (!passwordRegex.test(password))
+      return showToast("Password must be at least 8 characters!");
 
-    if (!passwordRegex.test(password)) {
-      return toast.error("Password must be at least 8 characters!");
-    }
+    if (password !== confirmPassword) return showToast("Passwords do not match!");
 
-    if (password !== confirmPassword) {
-      return toast.error("Passwords do not match!");
-    }
-
-    if (!["Male", "Female"].includes(gender)) {
-      return toast.error("Please select a valid gender!");
-    }
+    if (!["Male", "Female"].includes(gender))
+      return showToast("Please select a valid gender!");
 
     try {
-      // Send POST request with role included
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
         {
@@ -80,7 +76,7 @@ const AddNewAdmin = () => {
         }
       );
 
-      toast.success(data.message);
+      showToast(data.message, "success");
       navigateTo("/");
 
       // Reset form
@@ -93,8 +89,8 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      console.log(error.response?.data); // helpful for debugging
-      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error.response?.data);
+      showToast(error.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -169,9 +165,7 @@ const AddNewAdmin = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
+              <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                 {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>

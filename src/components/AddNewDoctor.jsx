@@ -8,6 +8,7 @@ import "./AddNewDoctor.css";
 
 const AddNewDoctor = () => {
   const { isAuthenticated } = useContext(Context);
+  const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -22,8 +23,6 @@ const AddNewDoctor = () => {
   const [doctorDepartment, setDoctorDepartment] = useState("");
   const [docAvatar, setDocAvatar] = useState("");
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
-
-  const navigateTo = useNavigate();
 
   const departmentsArray = [
     "Pediatrics",
@@ -49,45 +48,36 @@ const AddNewDoctor = () => {
     };
   };
 
+  const showToast = (message, type = "error") => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    type === "success" ? toast.success(message) : toast.error(message);
+  };
+
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
-    // Frontend regex validation
+    // Frontend validation regex
     const nameRegex = /^[A-Za-z ]{3,}$/;
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
-    if (!nameRegex.test(firstName)) {
-      return toast.error(
+    if (!nameRegex.test(firstName))
+      return showToast(
         "First Name must contain only letters and at least 3 characters"
       );
-    }
-
-    if (!nameRegex.test(lastName)) {
-      return toast.error(
+    if (!nameRegex.test(lastName))
+      return showToast(
         "Last Name must contain only letters and at least 3 characters"
       );
-    }
-
-    if (!phoneRegex.test(phone)) {
-      return toast.error("Phone number must contain exactly 10 digits!");
-    }
-
-    if (!passwordRegex.test(password)) {
-      return toast.error("Password must be at least 8 characters!");
-    }
-
-    if (password !== confirmPassword) {
-      return toast.error("Passwords do not match!");
-    }
-
-    if (!["Male", "Female"].includes(gender)) {
-      return toast.error("Please select a valid gender!");
-    }
-
-    if (!doctorDepartment) {
-      return toast.error("Please select a department!");
-    }
+    if (!phoneRegex.test(phone))
+      return showToast("Phone number must contain exactly 10 digits!");
+    if (!passwordRegex.test(password))
+      return showToast("Password must be at least 8 characters!");
+    if (password !== confirmPassword)
+      return showToast("Passwords do not match!");
+    if (!["Male", "Female"].includes(gender))
+      return showToast("Please select a valid gender!");
+    if (!doctorDepartment) return showToast("Please select a department!");
 
     try {
       const formData = new FormData();
@@ -99,7 +89,7 @@ const AddNewDoctor = () => {
       formData.append("dob", dob);
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
-      formData.append("role", "Doctor"); // required by backend
+      formData.append("role", "Doctor"); // Backend required
       formData.append("docAvatar", docAvatar);
 
       const response = await axios.post(
@@ -111,7 +101,7 @@ const AddNewDoctor = () => {
         }
       );
 
-      toast.success(response.data.message);
+      showToast(response.data.message, "success");
       navigateTo("/");
 
       // Reset form
@@ -127,14 +117,12 @@ const AddNewDoctor = () => {
       setDocAvatar("");
       setDocAvatarPreview("");
     } catch (error) {
-      console.log(error.response?.data); // for debugging
-      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error.response?.data);
+      showToast(error.response?.data?.message || "Something went wrong");
     }
   };
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" />;
 
   return (
     <div className="add-new-doctor-wrapper">
@@ -146,7 +134,7 @@ const AddNewDoctor = () => {
           <div className="first-wrapper">
             <div className="avatar-section">
               <img
-                src={docAvatarPreview ? docAvatarPreview : "/docHolder.jpg"}
+                src={docAvatarPreview || "/docHolder.jpg"}
                 alt="Doctor Avatar"
               />
               <input type="file" onChange={handleAvatar} />
@@ -195,7 +183,6 @@ const AddNewDoctor = () => {
                     {showPassword ? <FaEye /> : <FaEyeSlash />}
                   </span>
                 </div>
-
                 <div className="add-new-doctor-password-input">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
