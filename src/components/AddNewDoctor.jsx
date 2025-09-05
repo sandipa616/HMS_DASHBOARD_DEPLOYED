@@ -25,21 +25,13 @@ const AddNewDoctor = () => {
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
 
   const departmentsArray = [
-    "Pediatrics",
-    "Orthopedics",
-    "Cardiology",
-    "Neurology",
-    "Oncology",
-    "Radiology",
-    "Physiotherapy",
-    "Dermatology",
-    "Opthalmology",
-    "Gynecology",
-    "Odontology",
+    "Pediatrics", "Orthopedics", "Cardiology", "Neurology", "Oncology",
+    "Radiology", "Physiotherapy", "Dermatology", "Opthalmology", "Gynecology", "Odontology"
   ];
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
@@ -56,19 +48,14 @@ const AddNewDoctor = () => {
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
-    // Frontend validation regex
     const nameRegex = /^[A-Za-z ]{3,}$/;
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
     if (!nameRegex.test(firstName))
-      return showToast(
-        "First Name must contain only letters and at least 3 characters"
-      );
+      return showToast("First Name must contain only letters and at least 3 characters");
     if (!nameRegex.test(lastName))
-      return showToast(
-        "Last Name must contain only letters and at least 3 characters"
-      );
+      return showToast("Last Name must contain only letters and at least 3 characters");
     if (!phoneRegex.test(phone))
       return showToast("Phone number must contain exactly 10 digits!");
     if (!passwordRegex.test(password))
@@ -89,33 +76,22 @@ const AddNewDoctor = () => {
       formData.append("dob", dob);
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
-      formData.append("role", "Doctor"); // Backend required
+      formData.append("role", "Doctor");
       formData.append("docAvatar", docAvatar);
 
       const response = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
         formData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      // Show success toast
+      // Success toast
       showToast(response.data.message, "success");
 
       // Reset form
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPhone("");
-      setDob("");
-      setGender("");
-      setPassword("");
-      setConfirmPassword("");
-      setDoctorDepartment("");
-      setDocAvatar("");
-      setDocAvatarPreview("");
+      setFirstName(""); setLastName(""); setEmail(""); setPhone("");
+      setDob(""); setGender(""); setPassword(""); setConfirmPassword("");
+      setDoctorDepartment(""); setDocAvatar(""); setDocAvatarPreview("");
 
       // Delay redirect so toast is visible
       setTimeout(() => navigateTo("/"), 1500);
@@ -132,106 +108,40 @@ const AddNewDoctor = () => {
       <div className="add-new-doctor-box">
         <img src="/logo.png" alt="logo" className="add-new-doctor-logo" />
         <h1 className="doctor-form-title">ADD NEW DOCTOR</h1>
-
         <form onSubmit={handleAddNewDoctor} className="add-new-doctor-form">
           <div className="first-wrapper">
             <div className="avatar-section">
-              <img
-                src={docAvatarPreview || "/docHolder.jpg"}
-                alt="Doctor Avatar"
-              />
+              <img src={docAvatarPreview || "/docHolder.jpg"} alt="Doctor Avatar" />
               <input type="file" onChange={handleAvatar} />
             </div>
-
             <div className="form-section">
-              <input
-                type="text"
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <input
-                type="tel"
-                placeholder="Phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
+              <input type="text" placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} required />
+              <input type="text" placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} required />
+              <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+              <input type="tel" placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} required />
 
               <div className="add-new-doctor-password-row">
                 <div className="add-new-doctor-password-input">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <span onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <FaEye /> : <FaEyeSlash />}
-                  </span>
+                  <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+                  <span onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEye /> : <FaEyeSlash />}</span>
                 </div>
                 <div className="add-new-doctor-password-input">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                  <span
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-                  </span>
+                  <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
+                  <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>{showConfirmPassword ? <FaEye /> : <FaEyeSlash />}</span>
                 </div>
               </div>
 
-              <input
-                type="text"
-                onFocus={(e) => (e.target.type = "date")}
-                placeholder="Date of Birth"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                required
-              />
+              <input type="text" onFocus={e => e.target.type = "date"} placeholder="Date of Birth" value={dob} onChange={e => setDob(e.target.value)} required />
 
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                required
-              >
+              <select value={gender} onChange={e => setGender(e.target.value)} required>
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
 
-              <select
-                value={doctorDepartment}
-                onChange={(e) => setDoctorDepartment(e.target.value)}
-                required
-              >
+              <select value={doctorDepartment} onChange={e => setDoctorDepartment(e.target.value)} required>
                 <option value="">Select Department</option>
-                {departmentsArray.map((depart, index) => (
-                  <option value={depart} key={index}>
-                    {depart}
-                  </option>
-                ))}
+                {departmentsArray.map((depart, index) => <option key={index} value={depart}>{depart}</option>)}
               </select>
 
               <button type="submit">Add New Doctor</button>
