@@ -25,8 +25,47 @@ const AddNewAdmin = () => {
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
+    // ✅ Frontend validations
+    const nameRegex = /^[A-Za-z ]+$/;
+    const phoneRegex = /^\d{10}$/;
+
+    if (!nameRegex.test(firstName) || firstName.length < 3) {
+      toast.error("First Name must be at least 3 characters and only letters.");
+      return;
+    }
+
+    if (!nameRegex.test(lastName) || lastName.length < 3) {
+      toast.error("Last Name must be at least 3 characters and only letters.");
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      toast.error("Please enter a valid email.");
+      return;
+    }
+
+    if (!phoneRegex.test(phone)) {
+      toast.error("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
+      return;
+    }
+
+    if (!dob) {
+      toast.error("Please select Date of Birth.");
+      return;
+    }
+
+    if (!gender) {
+      toast.error("Please select Gender.");
       return;
     }
 
@@ -52,6 +91,7 @@ const AddNewAdmin = () => {
       toast.success(data.message);
       navigateTo("/");
 
+      // Clear form
       setFirstName("");
       setLastName("");
       setEmail("");

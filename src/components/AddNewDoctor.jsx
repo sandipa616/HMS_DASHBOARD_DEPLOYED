@@ -8,6 +8,7 @@ import "./AddNewDoctor.css";
 
 const AddNewDoctor = () => {
   const { isAuthenticated } = useContext(Context);
+  const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -23,8 +24,6 @@ const AddNewDoctor = () => {
   const [docAvatar, setDocAvatar] = useState("");
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
 
-  const navigateTo = useNavigate();
-
   const departmentsArray = [
     "Pediatrics",
     "Orthopedics",
@@ -39,8 +38,16 @@ const AddNewDoctor = () => {
     "Odontology",
   ];
 
+  // Regex for validation
+  const nameRegex = /^[A-Za-z ]+$/;
+  const phoneRegex = /^\d{10}$/;
+
   const handleAvatar = (e) => {
     const file = e.target.files[0];
+    if (file && !file.type.startsWith("image/")) {
+      toast.error("Avatar must be an image file");
+      return;
+    }
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
@@ -52,8 +59,49 @@ const AddNewDoctor = () => {
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
+    // Frontend Validations
+    if (!nameRegex.test(firstName) || firstName.length < 3) {
+      toast.error("First Name must be at least 3 characters and only letters.");
+      return;
+    }
+
+    if (!nameRegex.test(lastName) || lastName.length < 3) {
+      toast.error("Last Name must be at least 3 characters and only letters.");
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      toast.error("Please enter a valid email.");
+      return;
+    }
+
+    if (!phoneRegex.test(phone)) {
+      toast.error("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
+      return;
+    }
+
+    if (!gender) {
+      toast.error("Please select a gender.");
+      return;
+    }
+
+    if (!dob) {
+      toast.error("Please select Date of Birth.");
+      return;
+    }
+
+    if (!doctorDepartment) {
+      toast.error("Please select a department.");
       return;
     }
 
@@ -67,7 +115,7 @@ const AddNewDoctor = () => {
       formData.append("dob", dob);
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
-      formData.append("docAvatar", docAvatar);
+      if (docAvatar) formData.append("docAvatar", docAvatar);
 
       const response = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
@@ -81,6 +129,7 @@ const AddNewDoctor = () => {
       toast.success(response.data.message);
       navigateTo("/");
 
+      // Clear form
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -170,7 +219,9 @@ const AddNewDoctor = () => {
                     required
                   />
                   <span
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
                   >
                     {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                   </span>
@@ -178,8 +229,7 @@ const AddNewDoctor = () => {
               </div>
 
               <input
-                type="text"
-                onFocus={(e) => (e.target.type = "date")}
+                type="date"
                 placeholder="Date of Birth"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
@@ -199,6 +249,7 @@ const AddNewDoctor = () => {
               <select
                 value={doctorDepartment}
                 onChange={(e) => setDoctorDepartment(e.target.value)}
+                required
               >
                 <option value="">Select Department</option>
                 {departmentsArray.map((depart, index) => (
