@@ -21,10 +21,12 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Helper to show toast and scroll to top
+  // Helper to show error toasts (longer duration)
   const showToast = (message, type = "error") => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    type === "success" ? toast.success(message) : toast.error(message);
+    type === "success"
+      ? toast.success(message, { autoClose: 2000, position: "top-center" })
+      : toast.error(message, { autoClose: 5000, position: "top-center" });
   };
 
   const handleAddNewAdmin = async (e) => {
@@ -69,7 +71,7 @@ const AddNewAdmin = () => {
           dob,
           gender,
           password,
-          role: "Admin", // required by backend
+          role: "Admin",
         },
         {
           withCredentials: true,
@@ -77,8 +79,14 @@ const AddNewAdmin = () => {
         }
       );
 
-      // Show success toast
-      showToast(data.message, "success");
+      // ✅ Success toast at top-center, auto-close after 2s, then redirect
+      toast.success(data.message, {
+        autoClose: 2000,
+        position: "top-center",
+        onClose: () => {
+          navigateTo("/");
+        },
+      });
 
       // Reset form
       setFirstName("");
@@ -89,9 +97,6 @@ const AddNewAdmin = () => {
       setGender("");
       setPassword("");
       setConfirmPassword("");
-
-      // Navigate after 1.5s so toast is visible
-      setTimeout(() => navigateTo("/"), 1500);
     } catch (error) {
       // Show error toast immediately
       showToast(error.response?.data?.message || "Something went wrong");
@@ -169,7 +174,9 @@ const AddNewAdmin = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
                 {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>

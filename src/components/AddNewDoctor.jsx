@@ -40,9 +40,12 @@ const AddNewDoctor = () => {
     };
   };
 
+  // Toast helper (centered, different timing for success vs error)
   const showToast = (message, type = "error") => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    type === "success" ? toast.success(message) : toast.error(message);
+    type === "success"
+      ? toast.success(message, { autoClose: 2000, position: "top-center" })
+      : toast.error(message, { autoClose: 5000, position: "top-center" });
   };
 
   const handleAddNewDoctor = async (e) => {
@@ -80,22 +83,25 @@ const AddNewDoctor = () => {
       formData.append("role", "Doctor");
       formData.append("docAvatar", docAvatar);
 
-      const response = await axios.post(
+      const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
         formData,
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      // Show success toast immediately
-      showToast(response.data.message, "success");
+      // ✅ Success toast at top-center, auto-close in 2s, then redirect
+      toast.success(data.message, {
+        autoClose: 2000,
+        position: "top-center",
+        onClose: () => {
+          navigateTo("/");
+        },
+      });
 
       // Reset form
       setFirstName(""); setLastName(""); setEmail(""); setPhone("");
       setDob(""); setGender(""); setPassword(""); setConfirmPassword("");
       setDoctorDepartment(""); setDocAvatar(""); setDocAvatarPreview("");
-
-      // Navigate after 1.5s
-      setTimeout(() => navigateTo("/"), 1500);
     } catch (error) {
       showToast(error.response?.data?.message || "Something went wrong");
     }
@@ -141,7 +147,9 @@ const AddNewDoctor = () => {
 
               <select value={doctorDepartment} onChange={e => setDoctorDepartment(e.target.value)} required>
                 <option value="">Select Department</option>
-                {departmentsArray.map((depart, index) => <option key={index} value={depart}>{depart}</option>)}
+                {departmentsArray.map((depart, index) => (
+                  <option key={index} value={depart}>{depart}</option>
+                ))}
               </select>
 
               <button type="submit">Add New Doctor</button>
