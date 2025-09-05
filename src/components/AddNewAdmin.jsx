@@ -21,7 +21,6 @@ const AddNewAdmin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Helper to show error toasts (longer duration)
   const showToast = (message, type = "error") => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     type === "success"
@@ -32,31 +31,25 @@ const AddNewAdmin = () => {
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // Frontend validation regex
+    // Frontend validation
     const nameRegex = /^[A-Za-z ]{3,}$/;
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
-    // Validation
     if (!nameRegex.test(firstName))
       return showToast(
         "First Name must contain only letters and at least 3 characters"
       );
-
     if (!nameRegex.test(lastName))
       return showToast(
         "Last Name must contain only letters and at least 3 characters"
       );
-
     if (!phoneRegex.test(phone))
       return showToast("Phone number must contain exactly 10 digits!");
-
     if (!passwordRegex.test(password))
       return showToast("Password must be at least 8 characters!");
-
     if (password !== confirmPassword)
       return showToast("Passwords do not match!");
-
     if (!["Male", "Female"].includes(gender))
       return showToast("Please select a valid gender!");
 
@@ -79,13 +72,11 @@ const AddNewAdmin = () => {
         }
       );
 
-      // ✅ Success toast at top-center, auto-close after 2s, then redirect
+      // Success toast + redirect after toast closes
       toast.success(data.message, {
         autoClose: 2000,
         position: "top-center",
-        onClose: () => {
-          navigateTo("/");
-        },
+        onClose: () => navigateTo("/"),
       });
 
       // Reset form
@@ -98,7 +89,6 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      // Show error toast immediately
       showToast(error.response?.data?.message || "Something went wrong");
     }
   };
@@ -110,7 +100,6 @@ const AddNewAdmin = () => {
       <div className="add-new-admin-box">
         <img src="/logo.png" alt="logo" className="add-new-admin-logo" />
         <h1 className="admin-form-title">ADD NEW ADMIN</h1>
-
         <form onSubmit={handleAddNewAdmin} className="add-new-admin-form">
           <div className="add-new-admin-row">
             <input
@@ -121,7 +110,6 @@ const AddNewAdmin = () => {
               required
             />
           </div>
-
           <div className="add-new-admin-row">
             <input
               type="text"
@@ -131,7 +119,6 @@ const AddNewAdmin = () => {
               required
             />
           </div>
-
           <div className="add-new-admin-row">
             <input
               type="email"
@@ -141,7 +128,6 @@ const AddNewAdmin = () => {
               required
             />
           </div>
-
           <div className="add-new-admin-row">
             <input
               type="tel"
@@ -151,7 +137,6 @@ const AddNewAdmin = () => {
               required
             />
           </div>
-
           <div className="add-new-admin-password-row">
             <div className="add-new-admin-password-input">
               <input
@@ -165,7 +150,6 @@ const AddNewAdmin = () => {
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
-
             <div className="add-new-admin-password-input">
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -181,7 +165,6 @@ const AddNewAdmin = () => {
               </span>
             </div>
           </div>
-
           <div className="add-new-admin-row">
             <input
               type="text"
@@ -191,7 +174,6 @@ const AddNewAdmin = () => {
               onChange={(e) => setDob(e.target.value)}
               required
             />
-
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
@@ -202,7 +184,6 @@ const AddNewAdmin = () => {
               <option value="Female">Female</option>
             </select>
           </div>
-
           <div className="add-new-admin-submit">
             <button type="submit">Add New Admin</button>
           </div>

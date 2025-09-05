@@ -22,7 +22,7 @@ const AddNewDoctor = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [doctorDepartment, setDoctorDepartment] = useState("");
   const [docAvatar, setDocAvatar] = useState("");
-  const [docAvatarPreview, setDocAvatarPreview] = useState("");
+  const [docAvatarPreview, setDocAvatarPreview] = useState("/docHolder.jpg");
 
   const departmentsArray = [
     "Pediatrics",
@@ -40,7 +40,11 @@ const AddNewDoctor = () => {
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      setDocAvatarPreview("/docHolder.jpg");
+      setDocAvatar("");
+      return;
+    }
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
@@ -49,7 +53,6 @@ const AddNewDoctor = () => {
     };
   };
 
-  // Toast helper (centered, different timing for success vs error)
   const showToast = (message, type = "error") => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     type === "success"
@@ -64,7 +67,6 @@ const AddNewDoctor = () => {
     const phoneRegex = /^\d{10}$/;
     const passwordRegex = /^.{8,}$/;
 
-    // Validation
     if (!nameRegex.test(firstName))
       return showToast(
         "First Name must contain only letters and at least 3 characters"
@@ -105,7 +107,6 @@ const AddNewDoctor = () => {
         }
       );
 
-      // ✅ Success toast at top-center, auto-close in 2s, then redirect
       toast.success(data.message, {
         autoClose: 2000,
         position: "top-center",
@@ -125,7 +126,7 @@ const AddNewDoctor = () => {
       setConfirmPassword("");
       setDoctorDepartment("");
       setDocAvatar("");
-      setDocAvatarPreview("");
+      setDocAvatarPreview("/docHolder.jpg");
     } catch (error) {
       showToast(error.response?.data?.message || "Something went wrong");
     }
@@ -141,10 +142,7 @@ const AddNewDoctor = () => {
         <form onSubmit={handleAddNewDoctor} className="add-new-doctor-form">
           <div className="first-wrapper">
             <div className="avatar-section">
-              <img
-                src={docAvatarPreview || "/docHolder.jpg"}
-                alt="Doctor Avatar"
-              />
+              <img src={docAvatarPreview} alt="Doctor Avatar" />
               <input type="file" onChange={handleAvatar} />
             </div>
             <div className="form-section">
@@ -199,7 +197,9 @@ const AddNewDoctor = () => {
                     required
                   />
                   <span
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
                   >
                     {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                   </span>
