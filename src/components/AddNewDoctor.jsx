@@ -3,6 +3,7 @@ import { Context } from "../main";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 import "./AddNewDoctor.css";
 
@@ -17,10 +18,10 @@ const AddNewDoctor = () => {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [doctorDepartment, setDoctorDepartment] = useState("");
   const [docAvatar, setDocAvatar] = useState("");
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const departmentsArray = [
     "Pediatrics",
@@ -38,9 +39,8 @@ const AddNewDoctor = () => {
 
   // Regex patterns
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^[0-9]{10}$/; // exactly 10 digits
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,}$/;
-  // Password: min 6 chars, 1 uppercase, 1 lowercase, 1 digit
+  const phoneRegex = /^[0-9]{10}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
@@ -57,7 +57,7 @@ const AddNewDoctor = () => {
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
 
-    // ✅ Frontend validations
+    // Validations
     if (!emailRegex.test(email)) {
       return toast.error("Invalid email format", { position: "top-center" });
     }
@@ -66,12 +66,9 @@ const AddNewDoctor = () => {
     }
     if (!passwordRegex.test(password)) {
       return toast.error(
-        "Password must be at least 6 chars, include uppercase, lowercase, and number",
+        "Password must be at least 8 characters",
         { position: "top-center" }
       );
-    }
-    if (password !== confirmPassword) {
-      return toast.error("Passwords do not match", { position: "top-center" });
     }
 
     try {
@@ -106,19 +103,16 @@ const AddNewDoctor = () => {
       setDob("");
       setGender("");
       setPassword("");
-      setConfirmPassword("");
       setDoctorDepartment("");
       setDocAvatar("");
       setDocAvatarPreview("");
 
-      // Redirect only after success
-      navigateTo("/");
+      navigateTo("/"); // Redirect after success
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", {
         autoClose: 5000,
         position: "top-center",
       });
-      // Stay on AddNewDoctor page
     }
   };
 
@@ -126,7 +120,6 @@ const AddNewDoctor = () => {
 
   return (
     <div className="add-new-doctor-wrapper">
-      {/* Local ToastContainer */}
       <ToastContainer position="top-center" autoClose={3000} />
 
       <div className="add-new-doctor-box">
@@ -199,20 +192,21 @@ const AddNewDoctor = () => {
                   </option>
                 ))}
               </select>
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
+
+              {/* Password input with toggle */}
+              <div className="password-toggle-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <span onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
+                </span>
+              </div>
+
               <button type="submit">Add New Doctor</button>
             </div>
           </div>
