@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../main";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { GoCheckCircleFill } from "react-icons/go";
@@ -12,14 +12,6 @@ const Dashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const { isAuthenticated, admin } = useContext(Context);
-  const location = useLocation();
-
-  // Show login success toast once
-  useEffect(() => {
-    if (location.state?.loginSuccess) {
-      toast.success(location.state.loginSuccess, { autoClose: 2000 });
-    }
-  }, [location.state]);
 
   // Fetch appointments
   useEffect(() => {
@@ -92,7 +84,6 @@ const Dashboard = () => {
 
   return (
     <section className="dashboard page">
-      {/* Local ToastContainer */}
       <ToastContainer position="top-center" autoClose={3000} />
 
       {/* Banner / Summary */}
@@ -101,7 +92,7 @@ const Dashboard = () => {
           <img src="/doctor.jpg" alt="docImg" />
           <div className="content">
             <div>
-              <p>Hello,</p>
+              <p>Hello ,</p>
               <h5>{admin && `${admin.firstName} ${admin.lastName}`}</h5>
             </div>
             <p>

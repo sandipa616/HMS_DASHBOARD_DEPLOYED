@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 
 const Login = () => {
-  const { isAuthenticated } = useContext(Context);
+  const { isAuthenticated, setIsAuthenticated } = useContext(Context);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -23,15 +23,17 @@ const Login = () => {
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
 
-      // Navigate and pass success message to Dashboard
-      navigate("/", { state: { loginSuccess: res.data.message } });
-
+      setIsAuthenticated(true);
       setEmail("");
       setPassword("");
+
+      // Navigate to dashboard and pass login success message
+      navigate("/", { state: { loginSuccess: res.data.message } });
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong!", {
-        autoClose: 3000,
-      });
+      toast.error(
+        error.response?.data?.message || "Something went wrong!",
+        { autoClose: 3000, containerId: "login-toast" }
+      );
     }
   };
 
@@ -42,6 +44,7 @@ const Login = () => {
       <img src="/logo.png" alt="logo" className="logo" />
       <h1 className="form-title">WELCOME TO MEDORA</h1>
       <p>Only Admins Are Allowed To Access These Resources!</p>
+
       <form onSubmit={handleLogin}>
         <div className="login-email-wrapper">
           <input
@@ -52,6 +55,7 @@ const Login = () => {
             required
           />
         </div>
+
         <div className="login-password-input-wrapper">
           <input
             type={showPassword ? "text" : "password"}
@@ -67,13 +71,22 @@ const Login = () => {
             {showPassword ? <FaEye /> : <FaEyeSlash />}
           </span>
         </div>
+
         <div style={{ justifyContent: "center", alignItems: "center" }}>
           <button type="submit">Login</button>
         </div>
       </form>
 
       {/* Local ToastContainer */}
-      <ToastContainer position="top-center" autoClose={3000} />
+      <ToastContainer
+        containerId="login-toast"
+        position="top-center"
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };
