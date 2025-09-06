@@ -10,22 +10,19 @@ const AddNewDoctor = () => {
   const { isAuthenticated } = useContext(Context);
   const navigateTo = useNavigate();
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    dob: "",
-    gender: "",
-    password: "",
-    confirmPassword: "",
-    doctorDepartment: "",
-  });
-
-  const [docAvatar, setDocAvatar] = useState(null);
-  const [docAvatarPreview, setDocAvatarPreview] = useState(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [doctorDepartment, setDoctorDepartment] = useState("");
+  const [docAvatar, setDocAvatar] = useState("");
+  const [docAvatarPreview, setDocAvatarPreview] = useState("");
 
   const departmentsArray = [
     "Pediatrics",
@@ -41,10 +38,6 @@ const AddNewDoctor = () => {
     "Odontology",
   ];
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
   const handleAvatar = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -56,89 +49,93 @@ const AddNewDoctor = () => {
     };
   };
 
-  const validateForm = () => {
-    const {
-      firstName,
-      lastName,
-      phone,
-      password,
-      confirmPassword,
-      gender,
-      doctorDepartment,
-    } = formData;
-    if (!/^[A-Za-z ]{3,}$/.test(firstName)) {
-      toast.error("First Name must contain at least 3 letters");
-      return false;
-    }
-    if (!/^[A-Za-z ]{3,}$/.test(lastName)) {
-      toast.error("Last Name must contain at least 3 letters");
-      return false;
-    }
-    if (!/^\d{10}$/.test(phone)) {
-      toast.error("Phone number must contain exactly 10 digits");
-      return false;
-    }
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters");
-      return false;
-    }
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return false;
-    }
-    if (!["Male", "Female"].includes(gender)) {
-      toast.error("Please select a valid gender");
-      return false;
-    }
-    if (!doctorDepartment) {
-      toast.error("Please select a department");
-      return false;
-    }
-    if (!docAvatar) {
-      toast.error("Doctor avatar is required");
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
+  const handleAddNewDoctor = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+
+    // Validation
+    if (!/^[A-Za-z ]{3,}$/.test(firstName))
+      return toast.error("First Name must contain at least 3 letters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!/^[A-Za-z ]{3,}$/.test(lastName))
+      return toast.error("Last Name must contain at least 3 letters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!/^\d{10}$/.test(phone))
+      return toast.error("Phone number must contain exactly 10 digits", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (password.length < 8)
+      return toast.error("Password must be at least 8 characters", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (password !== confirmPassword)
+      return toast.error("Passwords do not match", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!["Male", "Female"].includes(gender))
+      return toast.error("Please select a valid gender", {
+        autoClose: 5000,
+        position: "top-center",
+      });
+    if (!doctorDepartment)
+      return toast.error("Please select a department", {
+        autoClose: 5000,
+        position: "top-center",
+      });
 
     try {
-      const dataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) =>
-        dataToSend.append(key, value)
-      );
-      dataToSend.append("docAvatar", docAvatar);
-      dataToSend.append("role", "Doctor");
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("password", password);
+      formData.append("dob", dob);
+      formData.append("gender", gender);
+      formData.append("doctorDepartment", doctorDepartment);
+      formData.append("role", "Doctor");
+      formData.append("docAvatar", docAvatar);
 
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/doctor/addnew",
-        dataToSend,
+        formData,
         {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
-      toast.success(data.message, { onClose: () => navigateTo("/") });
-
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        dob: "",
-        gender: "",
-        password: "",
-        confirmPassword: "",
-        doctorDepartment: "",
+      // Show success toast immediately, then navigate
+      toast.success(data.message, {
+        autoClose: 2000,
+        position: "top-center",
+        pauseOnHover: false,
+        onClose: () => navigateTo("/"),
       });
-      setDocAvatar(null);
-      setDocAvatarPreview(null);
+
+      // Reset form
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setDob("");
+      setGender("");
+      setPassword("");
+      setConfirmPassword("");
+      setDoctorDepartment("");
+      setDocAvatar("");
+      setDocAvatarPreview("");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong", {
+        autoClose: 5000,
+        position: "top-center",
+      });
     }
   };
 
@@ -149,112 +146,108 @@ const AddNewDoctor = () => {
       <div className="add-new-doctor-box">
         <img src="/logo.png" alt="logo" className="add-new-doctor-logo" />
         <h1 className="doctor-form-title">ADD NEW DOCTOR</h1>
-        <form onSubmit={handleSubmit} className="add-new-doctor-form">
-          <div className="avatar-section">
-            <img
-              src={docAvatarPreview || "/docHolder.jpg"}
-              alt="Doctor Avatar"
-            />
-            <input type="file" onChange={handleAvatar} />
-          </div>
-
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-
-          <div className="password-row">
-            <div>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
+        <form onSubmit={handleAddNewDoctor} className="add-new-doctor-form">
+          <div className="first-wrapper">
+            <div className="avatar-section">
+              <img
+                src={docAvatarPreview || "/docHolder.jpg"}
+                alt="Doctor Avatar"
               />
-              <span onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <FaEye /> : <FaEyeSlash />}
-              </span>
+              <input type="file" onChange={handleAvatar} />
             </div>
-            <div>
+            <div className="form-section">
               <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 required
               />
-              <span
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <input
+                type="tel"
+                placeholder="Phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+
+              <div className="add-new-doctor-password-row">
+                <div className="add-new-doctor-password-input">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <span onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
+                  </span>
+                </div>
+                <div className="add-new-doctor-password-input">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                  <span
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                  </span>
+                </div>
+              </div>
+
+              <input
+                type="text"
+                onFocus={(e) => (e.target.type = "date")}
+                placeholder="Date of Birth"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                required
+              />
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
               >
-                {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-              </span>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+
+              <select
+                value={doctorDepartment}
+                onChange={(e) => setDoctorDepartment(e.target.value)}
+                required
+              >
+                <option value="">Select Department</option>
+                {departmentsArray.map((depart, index) => (
+                  <option key={index} value={depart}>
+                    {depart}
+                  </option>
+                ))}
+              </select>
+
+              <button type="submit">Add New Doctor</button>
             </div>
           </div>
-
-          <input
-            type="date"
-            name="dob"
-            value={formData.dob}
-            onChange={handleChange}
-            required
-          />
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-
-          <select
-            name="doctorDepartment"
-            value={formData.doctorDepartment}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Department</option>
-            {departmentsArray.map((d, i) => (
-              <option key={i} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-
-          <button type="submit">Add New Doctor</button>
         </form>
       </div>
     </div>
