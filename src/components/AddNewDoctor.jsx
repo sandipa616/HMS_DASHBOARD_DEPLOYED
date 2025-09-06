@@ -40,7 +40,8 @@ const AddNewDoctor = () => {
   // Regex patterns
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^[0-9]{10}$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
+  const passwordRegex = /^.{8,}$/; 
+
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];

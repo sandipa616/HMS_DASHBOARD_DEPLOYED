@@ -29,7 +29,8 @@ const AddNewAdmin = () => {
     const nameRegex = /^[A-Za-z]+$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{7,15}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
+    const passwordRegex = /^.{8,}$/; 
+
 
     if (!nameRegex.test(firstName)) {
       toast.error("First name should contain only letters!", { position: "top-center" });
@@ -53,7 +54,7 @@ const AddNewAdmin = () => {
 
     if (!passwordRegex.test(password)) {
       toast.error(
-        "Password must be at least 6 characters, include a letter, a number, and a special character.",
+        "Password must be at least 8 characters",
         { position: "top-center" }
       );
       return;
