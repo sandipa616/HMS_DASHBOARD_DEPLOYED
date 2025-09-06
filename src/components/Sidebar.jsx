@@ -8,15 +8,13 @@ import { MdAddModerator } from "react-icons/md";
 import { IoPersonAddSharp } from "react-icons/io5";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Context } from "../main";
 import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 import './Sidebar.css';
-
 
 const Sidebar = () => {
   const [show, setShow] = useState(false);
-
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
   const navigateTo = useNavigate();
 
@@ -29,31 +27,41 @@ const Sidebar = () => {
   }, [show]);
 
   const handleLogout = async () => {
-    await axios
-      .get("https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/logout", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        toast.success(res.data.message);
+    try {
+      const res = await axios.get(
+        "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/logout",
+        { withCredentials: true }
+      );
+
+      // Show toast immediately
+      toast.success(res.data.message, { autoClose: 2000 });
+
+      // Delay logout so toast can display
+      setTimeout(() => {
         setIsAuthenticated(false);
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
+        navigateTo("/login");
+      }, 2100); // slightly longer than toast duration
+
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong", {
+        autoClose: 3000,
       });
+    }
   };
 
   const gotoPage = (path) => {
     navigateTo(path);
-    setShow(false); // close sidebar after navigation
+    setShow(false);
   };
+
+  if (!isAuthenticated) return null;
 
   return (
     <>
-    <ToastContainer position="top-center" autoClose={3000} />
-      <nav
-        style={!isAuthenticated ? { display: "none" } : { display: "flex" }}
-        className={show ? "show sidebar" : "sidebar"}
-      >
+      {/* Local ToastContainer in Sidebar */}
+      <ToastContainer position="top-center" autoClose={2000} />
+
+      <nav className={show ? "show sidebar" : "sidebar"}>
         <div className="sidebar-links">
           <TiHome onClick={() => gotoPage("/")} />
           <FaUserDoctor onClick={() => gotoPage("/doctors")} />
@@ -63,10 +71,8 @@ const Sidebar = () => {
           <RiLogoutBoxFill onClick={handleLogout} />
         </div>
       </nav>
-      <div
-        className="sidebar-wrapper"
-        style={!isAuthenticated ? { display: "none" } : { display: "flex" }}
-      >
+
+      <div className="sidebar-wrapper">
         <GiHamburgerMenu
           className="sidebar-hamburger"
           onClick={() => setShow(!show)}
