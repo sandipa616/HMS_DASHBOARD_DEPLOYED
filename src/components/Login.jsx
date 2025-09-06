@@ -20,79 +20,60 @@ const Login = () => {
       const res = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/login",
         { email, password, role: "Admin" },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
+        { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
-      toast.success(res.data.message);
+      toast.success(res.data.message, { autoClose: 2000 });
       setIsAuthenticated(true);
-      navigate("/");
+
+      // Delay navigation so toast is visible
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
+
       setEmail("");
       setPassword("");
     } catch (error) {
-      // Check if error response exists to avoid crashing
-      const errorMsg =
-        error.response?.data?.message || "Something went wrong!";
-      toast.error(errorMsg);
+      toast.error(error.response?.data?.message || "Something went wrong!", { autoClose: 3000 });
     }
   };
 
-  if (isAuthenticated) {
-    return <Navigate to="/" />;
-  }
+  if (isAuthenticated) return <Navigate to="/" />;
 
   return (
-    <>
-      <div className="container form-component">
-        <img src="/logo.png" alt="logo" className="logo" />
-        <h1 className="form-title">WELCOME TO MEDORA</h1>
-        <p>Only Admins Are Allowed To Access These Resources!</p>
-        <form onSubmit={handleLogin}>
-          <div className="login-email-wrapper">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="login-password-input-wrapper">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <span
-              className="login-toggle-password"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </span>
-          </div>
-
-          <div style={{ justifyContent: "center", alignItems: "center" }}>
-            <button type="submit">Login</button>
-          </div>
-        </form>
-      </div>
-
-      {/* Toast Container */}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </>
+    <div className="container form-component">
+      <img src="/logo.png" alt="logo" className="logo" />
+      <h1 className="form-title">WELCOME TO MEDORA</h1>
+      <p>Only Admins Are Allowed To Access These Resources!</p>
+      <form onSubmit={handleLogin}>
+        <div className="login-email-wrapper">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="login-password-input-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <span className="login-toggle-password" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <FaEye /> : <FaEyeSlash />}
+          </span>
+        </div>
+        <div style={{ justifyContent: "center", alignItems: "center" }}>
+          <button type="submit">Login</button>
+        </div>
+      </form>
+      
+      {/* Local ToastContainer */}
+      <ToastContainer position="top-center" hideProgressBar={false} newestOnTop closeOnClick />
+    </div>
   );
 };
 
