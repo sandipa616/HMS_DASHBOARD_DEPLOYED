@@ -22,28 +22,35 @@ const Login = () => {
         { email, password, role: "Admin" },
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
-      toast.success(res.data.message, { autoClose: 2000 });
+
+      // Show success toast
+      toast.success(res.data.message, { autoClose: 2000, pauseOnHover: true });
+
       setIsAuthenticated(true);
+      setEmail("");
+      setPassword("");
 
       // Delay navigation so toast is visible
       setTimeout(() => {
         navigate("/");
       }, 500);
-
-      setEmail("");
-      setPassword("");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong!", { autoClose: 3000 });
+      // Show error toast
+      toast.error(error.response?.data?.message || "Something went wrong!", {
+        autoClose: 3000,
+        pauseOnHover: true,
+      });
     }
   };
 
   if (isAuthenticated) return <Navigate to="/" />;
 
   return (
-    <div className="container form-component">
+    <div className="container form-component" style={{ overflow: "visible" }}>
       <img src="/logo.png" alt="logo" className="logo" />
       <h1 className="form-title">WELCOME TO MEDORA</h1>
       <p>Only Admins Are Allowed To Access These Resources!</p>
+
       <form onSubmit={handleLogin}>
         <div className="login-email-wrapper">
           <input
@@ -54,6 +61,7 @@ const Login = () => {
             required
           />
         </div>
+
         <div className="login-password-input-wrapper">
           <input
             type={showPassword ? "text" : "password"}
@@ -62,17 +70,31 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <span className="login-toggle-password" onClick={() => setShowPassword(!showPassword)}>
+          <span
+            className="login-toggle-password"
+            onClick={() => setShowPassword(!showPassword)}
+          >
             {showPassword ? <FaEye /> : <FaEyeSlash />}
           </span>
         </div>
+
         <div style={{ justifyContent: "center", alignItems: "center" }}>
           <button type="submit">Login</button>
         </div>
       </form>
-      
+
       {/* Local ToastContainer */}
-      <ToastContainer position="top-center" hideProgressBar={false} newestOnTop closeOnClick />
+      <ToastContainer
+        position="top-center"
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ zIndex: 9999 }}
+      />
     </div>
   );
 };
