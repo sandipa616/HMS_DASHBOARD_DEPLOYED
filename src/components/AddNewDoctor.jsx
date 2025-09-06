@@ -1,8 +1,9 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../main";
 import { Navigate, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
 import "./AddNewDoctor.css";
 
 const AddNewDoctor = () => {
@@ -96,7 +97,6 @@ const AddNewDoctor = () => {
       );
 
       toast.success(data.message, { autoClose: 2000, position: "top-center" });
-      navigateTo("/");
 
       // Reset form
       setFirstName("");
@@ -110,11 +110,15 @@ const AddNewDoctor = () => {
       setDoctorDepartment("");
       setDocAvatar("");
       setDocAvatarPreview("");
+
+      // Redirect only after success
+      navigateTo("/");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", {
         autoClose: 5000,
         position: "top-center",
       });
+      // Stay on AddNewDoctor page
     }
   };
 
@@ -122,6 +126,9 @@ const AddNewDoctor = () => {
 
   return (
     <div className="add-new-doctor-wrapper">
+      {/* Local ToastContainer */}
+      <ToastContainer position="top-center" autoClose={3000} />
+
       <div className="add-new-doctor-box">
         <img src="/logo.png" alt="logo" className="add-new-doctor-logo" />
         <h1 className="doctor-form-title">ADD NEW DOCTOR</h1>

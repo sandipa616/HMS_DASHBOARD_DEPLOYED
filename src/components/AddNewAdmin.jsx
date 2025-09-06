@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../main";
 import { Navigate, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import "react-toastify/dist/ReactToastify.css";
 import "./AddNewAdmin.css";
 
 const AddNewAdmin = () => {
@@ -22,65 +23,57 @@ const AddNewAdmin = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleAddNewAdmin = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // prevent default form reload
 
-    // ✅ Regex patterns
-    const nameRegex = /^[A-Za-z]+$/; // alphabets only
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic email format
-    const phoneRegex = /^[0-9]{10}$/; // 10 digits only
+    // Regex validations
+    const nameRegex = /^[A-Za-z]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{7,15}$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
-    // at least 6 chars, 1 letter, 1 number, 1 special char
 
-    // ✅ Validations with toast notifications
     if (!nameRegex.test(firstName)) {
-      toast.error("First name should contain only letters.");
+      toast.error("First name should contain only letters!", { position: "top-center" });
       return;
     }
+
     if (!nameRegex.test(lastName)) {
-      toast.error("Last name should contain only letters.");
+      toast.error("Last name should contain only letters!", { position: "top-center" });
       return;
     }
+
     if (!emailRegex.test(email)) {
-      toast.error("Invalid email address.");
+      toast.error("Please enter a valid email address!", { position: "top-center" });
       return;
     }
+
     if (!phoneRegex.test(phone)) {
-      toast.error("Phone number must be exactly 10 digits.");
+      toast.error("Phone number must be 7–15 digits!", { position: "top-center" });
       return;
     }
+
     if (!passwordRegex.test(password)) {
       toast.error(
-        "Password must be at least 6 characters and include a letter, number, and special character."
+        "Password must be at least 6 characters, include a letter, a number, and a special character.",
+        { position: "top-center" }
       );
       return;
     }
+
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
+      toast.error("Passwords do not match!", { position: "top-center" });
       return;
     }
 
     try {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
-        {
-          firstName,
-          lastName,
-          email,
-          phone,
-          dob,
-          gender,
-          password,
-          confirmPassword,
-        },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
+        { firstName, lastName, email, phone, dob, gender, password, confirmPassword },
+        { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
 
-      toast.success(data.message);
+      toast.success(data.message, { position: "top-center", autoClose: 2000 });
 
-      // ✅ Clear form
+      // Reset form
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -90,9 +83,14 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
 
+      // Redirect only after successful addition
       navigateTo("/");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong", {
+        position: "top-center",
+        autoClose: 5000,
+      });
+      // Stay on AddNewAdmin page
     }
   };
 
@@ -100,6 +98,9 @@ const AddNewAdmin = () => {
 
   return (
     <div className="add-new-admin-wrapper">
+      {/* Local Toast Container */}
+      <ToastContainer position="top-center" autoClose={3000} />
+
       <div className="add-new-admin-box">
         <img src="/logo.png" alt="logo" className="add-new-admin-logo" />
         <h1 className="admin-form-title">ADD NEW ADMIN</h1>
@@ -167,9 +168,7 @@ const AddNewAdmin = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
+              <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                 {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
@@ -184,11 +183,7 @@ const AddNewAdmin = () => {
               onChange={(e) => setDob(e.target.value)}
               required
             />
-            <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              required
-            >
+            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
