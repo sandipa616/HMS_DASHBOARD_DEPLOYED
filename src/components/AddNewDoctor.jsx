@@ -7,7 +7,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./AddNewDoctor.css";
 
 const AddNewDoctor = () => {
-  const { isAuthenticated, loading } = useContext(Context);
+  const { isAuthenticated } = useContext(Context);
   const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
@@ -37,10 +37,6 @@ const AddNewDoctor = () => {
     "Gynecology",
     "Odontology",
   ];
-
-  // Wait for auth verification
-  if (loading) return <div>Loading...</div>;
-  if (!isAuthenticated) return <Navigate to="/login" />;
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
@@ -115,6 +111,7 @@ const AddNewDoctor = () => {
         }
       );
 
+      // Show success toast immediately, then navigate
       toast.success(data.message, {
         autoClose: 2000,
         position: "top-center",
@@ -141,6 +138,8 @@ const AddNewDoctor = () => {
       });
     }
   };
+
+  if (!isAuthenticated) return <Navigate to="/login" />;
 
   return (
     <div className="add-new-doctor-wrapper">
@@ -217,8 +216,8 @@ const AddNewDoctor = () => {
 
               <input
                 type="text"
-                placeholder="Date of Birth"
                 onFocus={(e) => (e.target.type = "date")}
+                placeholder="Date of Birth"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
                 required

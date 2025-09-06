@@ -7,7 +7,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./AddNewAdmin.css";
 
 const AddNewAdmin = () => {
-  const { isAuthenticated, loading } = useContext(Context);
+  const { isAuthenticated } = useContext(Context);
   const navigateTo = useNavigate();
 
   const [firstName, setFirstName] = useState("");
@@ -20,12 +20,6 @@ const AddNewAdmin = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  // Show loading state while verifying auth
-  if (loading) return <div>Loading...</div>;
-
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) return <Navigate to="/login" />;
 
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
@@ -81,6 +75,7 @@ const AddNewAdmin = () => {
         }
       );
 
+      // Success toast: appear immediately, redirect after 2s
       toast.success(data.message, {
         autoClose: 2000,
         position: "top-center",
@@ -104,6 +99,8 @@ const AddNewAdmin = () => {
       });
     }
   };
+
+  if (!isAuthenticated) return <Navigate to="/login" />;
 
   return (
     <div className="add-new-admin-wrapper">
