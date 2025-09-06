@@ -14,10 +14,10 @@ const Dashboard = () => {
   const { isAuthenticated, admin } = useContext(Context);
   const location = useLocation();
 
-  // Show login success toast
+  // Show login success toast once
   useEffect(() => {
     if (location.state?.loginSuccess) {
-      toast.success("Admin Login Successfully!", { autoClose: 2000 });
+      toast.success(location.state.loginSuccess, { autoClose: 2000 });
     }
   }, [location.state]);
 
@@ -101,7 +101,7 @@ const Dashboard = () => {
           <img src="/doctor.jpg" alt="docImg" />
           <div className="content">
             <div>
-              <p>Hello ,</p>
+              <p>Hello,</p>
               <h5>{admin && `${admin.firstName} ${admin.lastName}`}</h5>
             </div>
             <p>
