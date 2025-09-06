@@ -7,12 +7,12 @@ import { FaUserDoctor } from "react-icons/fa6";
 import { MdAddModerator } from "react-icons/md";
 import { IoPersonAddSharp } from "react-icons/io5";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { Context } from "../main";
-import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Context } from "../main";
+import { useNavigate } from "react-router-dom";
 import './Sidebar.css';
+
 
 const Sidebar = () => {
   const [show, setShow] = useState(false);
