@@ -23,21 +23,24 @@ const Login = () => {
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
 
-      setIsAuthenticated(true);
-      setEmail("");
-      setPassword("");
-
-      // Show success toast and navigate only after toast closes
-      toast.success(res.data.message || "Login Successful!", {
+      toast.success(res.data.message, {
         autoClose: 2000,
-        position: "top-center",
-        onClose: () => navigate("/"),
+        containerId: "login-toast", // 👈 important
       });
 
+      setIsAuthenticated(true);
+
+      // Wait until toast finishes before navigating
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+
+      setEmail("");
+      setPassword("");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong!", {
         autoClose: 3000,
-        position: "top-center",
+        containerId: "login-toast", // 👈 important
       });
     }
   };
@@ -67,10 +70,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <span
-            className="login-toggle-password"
-            onClick={() => setShowPassword(!showPassword)}
-          >
+          <span className="login-toggle-password" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? <FaEye /> : <FaEyeSlash />}
           </span>
         </div>
@@ -79,8 +79,16 @@ const Login = () => {
         </div>
       </form>
 
-      {/* Local ToastContainer */}
-      <ToastContainer hideProgressBar={false} newestOnTop closeOnClick />
+      {/* Local ToastContainer with unique id */}
+      <ToastContainer
+        containerId="login-toast"
+        position="top-center"
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };
