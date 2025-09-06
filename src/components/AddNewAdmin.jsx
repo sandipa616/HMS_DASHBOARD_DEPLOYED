@@ -29,34 +29,40 @@ const AddNewAdmin = () => {
     const nameRegex = /^[A-Za-z]+$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{7,15}$/;
-    const passwordRegex = /^.{8,}$/; 
-
+    const passwordRegex = /^.{8,}$/;
 
     if (!nameRegex.test(firstName)) {
-      toast.error("First name should contain only letters!", { position: "top-center" });
+      toast.error("First name should contain only letters!", {
+        position: "top-center",
+      });
       return;
     }
 
     if (!nameRegex.test(lastName)) {
-      toast.error("Last name should contain only letters!", { position: "top-center" });
+      toast.error("Last name should contain only letters!", {
+        position: "top-center",
+      });
       return;
     }
 
     if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address!", { position: "top-center" });
+      toast.error("Please enter a valid email address!", {
+        position: "top-center",
+      });
       return;
     }
 
     if (!phoneRegex.test(phone)) {
-      toast.error("Phone number must be 7–15 digits!", { position: "top-center" });
+      toast.error("Phone number must be 7–15 digits!", {
+        position: "top-center",
+      });
       return;
     }
 
     if (!passwordRegex.test(password)) {
-      toast.error(
-        "Password must be at least 8 characters",
-        { position: "top-center" }
-      );
+      toast.error("Password must be at least 8 characters", {
+        position: "top-center",
+      });
       return;
     }
 
@@ -68,8 +74,20 @@ const AddNewAdmin = () => {
     try {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
-        { firstName, lastName, email, phone, dob, gender, password, confirmPassword },
-        { withCredentials: true, headers: { "Content-Type": "application/json" } }
+        {
+          firstName,
+          lastName,
+          email,
+          phone,
+          dob,
+          gender,
+          password,
+          confirmPassword,
+        },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
       toast.success(data.message, { position: "top-center", autoClose: 2000 });
@@ -84,8 +102,9 @@ const AddNewAdmin = () => {
       setPassword("");
       setConfirmPassword("");
 
-      // Redirect only after successful addition
-      navigateTo("/");
+      setTimeout(() => {
+        navigateTo("/");
+      }, 2100);
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", {
         position: "top-center",
@@ -169,7 +188,9 @@ const AddNewAdmin = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
                 {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
@@ -184,7 +205,11 @@ const AddNewAdmin = () => {
               onChange={(e) => setDob(e.target.value)}
               required
             />
-            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              required
+            >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>

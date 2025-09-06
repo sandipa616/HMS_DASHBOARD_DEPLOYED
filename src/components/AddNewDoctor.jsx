@@ -40,8 +40,7 @@ const AddNewDoctor = () => {
   // Regex patterns
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^[0-9]{10}$/;
-  const passwordRegex = /^.{8,}$/; 
-
+  const passwordRegex = /^.{8,}$/;
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
@@ -107,7 +106,9 @@ const AddNewDoctor = () => {
       setDocAvatar("");
       setDocAvatarPreview("");
 
-      navigateTo("/"); // Redirect after success
+      setTimeout(() => {
+        navigateTo("/");
+      }, 2100);
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", {
         autoClose: 5000,
