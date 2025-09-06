@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../main";
 import axios from "axios";
-import { Navigate, useNavigate, Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Navigate, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 
 const Login = () => {
@@ -30,7 +31,10 @@ const Login = () => {
       setEmail("");
       setPassword("");
     } catch (error) {
-      toast.error(error.response.data.message);
+      // Check if error response exists to avoid crashing
+      const errorMsg =
+        error.response?.data?.message || "Something went wrong!";
+      toast.error(errorMsg);
     }
   };
 
@@ -69,12 +73,25 @@ const Login = () => {
               {showPassword ? <FaEye /> : <FaEyeSlash />}
             </span>
           </div>
-          
+
           <div style={{ justifyContent: "center", alignItems: "center" }}>
             <button type="submit">Login</button>
           </div>
         </form>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 };
