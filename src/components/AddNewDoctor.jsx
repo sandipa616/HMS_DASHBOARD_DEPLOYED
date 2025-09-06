@@ -65,10 +65,9 @@ const AddNewDoctor = () => {
       return toast.error("Phone must be 10 digits", { position: "top-center" });
     }
     if (!passwordRegex.test(password)) {
-      return toast.error(
-        "Password must be at least 8 characters",
-        { position: "top-center" }
-      );
+      return toast.error("Password must be at least 8 characters", {
+        position: "top-center",
+      });
     }
 
     try {
@@ -193,8 +192,7 @@ const AddNewDoctor = () => {
                 ))}
               </select>
 
-              {/* Password input with toggle */}
-              <div className="password-toggle-wrapper">
+              <div className="add-new-doctor-password-input">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
