@@ -35,30 +35,19 @@ const App = () => {
     fetchUser();
   }, [setIsAuthenticated, setUser]);
 
+  
   return (
     <Router>
-      {/* ToastContainer should always be rendered first */}
-      <ToastContainer 
-        position="top-center"
-        autoClose={3000}
-        newestOnTop={true}
-        closeOnClick
-        pauseOnHover={false}
-        draggable
-        theme="colored"
-        style={{ zIndex: 9999 }}
-      />
-
-      {isAuthenticated && <Sidebar />}
-
+      <Sidebar />
       <Routes>
-        <Route path='/' element={<Dashboard />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/doctor/addnew' element={<AddNewDoctor />} />
-        <Route path='/admin/addnew' element={<AddNewAdmin />} />
-        <Route path='/messages' element={<Messages />} />
-        <Route path='/doctors' element={<Doctors />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/doctor/addnew" element={<AddNewDoctor />} />
+        <Route path="/admin/addnew" element={<AddNewAdmin />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/doctors" element={<Doctors />} />
       </Routes>
+      <ToastContainer position="top-center" />
     </Router>
   );
 };
