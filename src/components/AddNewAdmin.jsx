@@ -24,7 +24,36 @@ const AddNewAdmin = () => {
   const handleAddNewAdmin = async (e) => {
     e.preventDefault();
 
-    // Password match validation
+    // ✅ Regex patterns
+    const nameRegex = /^[A-Za-z]+$/; // alphabets only
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic email format
+    const phoneRegex = /^[0-9]{10}$/; // 10 digits only
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
+    // at least 6 chars, 1 letter, 1 number, 1 special char
+
+    // ✅ Validations with toast notifications
+    if (!nameRegex.test(firstName)) {
+      toast.error("First name should contain only letters.");
+      return;
+    }
+    if (!nameRegex.test(lastName)) {
+      toast.error("Last name should contain only letters.");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email address.");
+      return;
+    }
+    if (!phoneRegex.test(phone)) {
+      toast.error("Phone number must be exactly 10 digits.");
+      return;
+    }
+    if (!passwordRegex.test(password)) {
+      toast.error(
+        "Password must be at least 6 characters and include a letter, number, and special character."
+      );
+      return;
+    }
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
       return;
@@ -51,7 +80,7 @@ const AddNewAdmin = () => {
 
       toast.success(data.message);
 
-      // Clear form
+      // ✅ Clear form
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -138,7 +167,9 @@ const AddNewAdmin = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <span onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
                 {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
@@ -153,7 +184,11 @@ const AddNewAdmin = () => {
               onChange={(e) => setDob(e.target.value)}
               required
             />
-            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              required
+            >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>

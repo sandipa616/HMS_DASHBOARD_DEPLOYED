@@ -35,6 +35,12 @@ const AddNewDoctor = () => {
     "Odontology",
   ];
 
+  // Regex patterns
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^[0-9]{10}$/; // exactly 10 digits
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,}$/;
+  // Password: min 6 chars, 1 uppercase, 1 lowercase, 1 digit
+
   const handleAvatar = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -49,6 +55,23 @@ const AddNewDoctor = () => {
 
   const handleAddNewDoctor = async (e) => {
     e.preventDefault();
+
+    // ✅ Frontend validations
+    if (!emailRegex.test(email)) {
+      return toast.error("Invalid email format", { position: "top-center" });
+    }
+    if (!phoneRegex.test(phone)) {
+      return toast.error("Phone must be 10 digits", { position: "top-center" });
+    }
+    if (!passwordRegex.test(password)) {
+      return toast.error(
+        "Password must be at least 6 chars, include uppercase, lowercase, and number",
+        { position: "top-center" }
+      );
+    }
+    if (password !== confirmPassword) {
+      return toast.error("Passwords do not match", { position: "top-center" });
+    }
 
     try {
       const formData = new FormData();
@@ -105,7 +128,10 @@ const AddNewDoctor = () => {
         <form onSubmit={handleAddNewDoctor} className="add-new-doctor-form">
           <div className="first-wrapper">
             <div className="avatar-section">
-              <img src={docAvatarPreview || "/docHolder.jpg"} alt="Doctor Avatar" />
+              <img
+                src={docAvatarPreview || "/docHolder.jpg"}
+                alt="Doctor Avatar"
+              />
               <input type="file" onChange={handleAvatar} />
             </div>
             <div className="form-section">
@@ -145,7 +171,11 @@ const AddNewDoctor = () => {
                 onChange={(e) => setDob(e.target.value)}
                 required
               />
-              <select value={gender} onChange={(e) => setGender(e.target.value)} required>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
+              >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
