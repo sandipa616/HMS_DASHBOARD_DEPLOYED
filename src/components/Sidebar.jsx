@@ -47,6 +47,7 @@ const Sidebar = () => {
 
   return (
     <>
+    <ToastContainer position="top-center" autoClose={3000} />
       <nav
         style={!isAuthenticated ? { display: "none" } : { display: "flex" }}
         className={show ? "show sidebar" : "sidebar"}
