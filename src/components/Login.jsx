@@ -23,25 +23,17 @@ const Login = () => {
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
 
-      toast.success(res.data.message, {
-        autoClose: 2000,
-        containerId: "login-toast", // 👈 important
-      });
-
       setIsAuthenticated(true);
-
-      // Wait until toast finishes before navigating
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-
       setEmail("");
       setPassword("");
+
+      // Navigate to dashboard and pass login success message
+      navigate("/", { state: { loginSuccess: res.data.message } });
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong!", {
-        autoClose: 3000,
-        containerId: "login-toast", // 👈 important
-      });
+      toast.error(
+        error.response?.data?.message || "Something went wrong!",
+        { autoClose: 3000, containerId: "login-toast" }
+      );
     }
   };
 
@@ -52,6 +44,7 @@ const Login = () => {
       <img src="/logo.png" alt="logo" className="logo" />
       <h1 className="form-title">WELCOME TO MEDORA</h1>
       <p>Only Admins Are Allowed To Access These Resources!</p>
+
       <form onSubmit={handleLogin}>
         <div className="login-email-wrapper">
           <input
@@ -62,6 +55,7 @@ const Login = () => {
             required
           />
         </div>
+
         <div className="login-password-input-wrapper">
           <input
             type={showPassword ? "text" : "password"}
@@ -70,16 +64,20 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <span className="login-toggle-password" onClick={() => setShowPassword(!showPassword)}>
+          <span
+            className="login-toggle-password"
+            onClick={() => setShowPassword(!showPassword)}
+          >
             {showPassword ? <FaEye /> : <FaEyeSlash />}
           </span>
         </div>
+
         <div style={{ justifyContent: "center", alignItems: "center" }}>
           <button type="submit">Login</button>
         </div>
       </form>
 
-      {/* Local ToastContainer with unique id */}
+      {/* Local ToastContainer */}
       <ToastContainer
         containerId="login-toast"
         position="top-center"
