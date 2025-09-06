@@ -23,22 +23,21 @@ const Login = () => {
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
 
-      // Show success toast
-      toast.success(res.data.message, { autoClose: 2000, pauseOnHover: true });
-
       setIsAuthenticated(true);
       setEmail("");
       setPassword("");
 
-      // Delay navigation so toast is visible
-      setTimeout(() => {
-        navigate("/");
-      }, 500);
+      // Show success toast and navigate only after toast closes
+      toast.success(res.data.message || "Login Successful!", {
+        autoClose: 2000,
+        position: "top-center",
+        onClose: () => navigate("/"),
+      });
+
     } catch (error) {
-      // Show error toast
       toast.error(error.response?.data?.message || "Something went wrong!", {
         autoClose: 3000,
-        pauseOnHover: true,
+        position: "top-center",
       });
     }
   };
@@ -46,11 +45,10 @@ const Login = () => {
   if (isAuthenticated) return <Navigate to="/" />;
 
   return (
-    <div className="container form-component" style={{ overflow: "visible" }}>
+    <div className="container form-component">
       <img src="/logo.png" alt="logo" className="logo" />
       <h1 className="form-title">WELCOME TO MEDORA</h1>
       <p>Only Admins Are Allowed To Access These Resources!</p>
-
       <form onSubmit={handleLogin}>
         <div className="login-email-wrapper">
           <input
@@ -61,7 +59,6 @@ const Login = () => {
             required
           />
         </div>
-
         <div className="login-password-input-wrapper">
           <input
             type={showPassword ? "text" : "password"}
@@ -77,24 +74,13 @@ const Login = () => {
             {showPassword ? <FaEye /> : <FaEyeSlash />}
           </span>
         </div>
-
         <div style={{ justifyContent: "center", alignItems: "center" }}>
           <button type="submit">Login</button>
         </div>
       </form>
 
       {/* Local ToastContainer */}
-      <ToastContainer
-        position="top-center"
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        style={{ zIndex: 9999 }}
-      />
+      <ToastContainer hideProgressBar={false} newestOnTop closeOnClick />
     </div>
   );
 };
