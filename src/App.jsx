@@ -33,12 +33,24 @@ const App = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [setIsAuthenticated, setUser]);
 
   return (
     <Router>
+      {/* ToastContainer should always be rendered first */}
+      <ToastContainer 
+        position="top-center"
+        autoClose={3000}
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover={false}
+        draggable
+        theme="colored"
+        style={{ zIndex: 9999 }}
+      />
+
       {isAuthenticated && <Sidebar />}
-      <ToastContainer position="top-center" autoClose={2000} />
+
       <Routes>
         <Route path='/' element={<Dashboard />} />
         <Route path='/login' element={<Login />} />
@@ -47,7 +59,6 @@ const App = () => {
         <Route path='/messages' element={<Messages />} />
         <Route path='/doctors' element={<Doctors />} />
       </Routes>
-
     </Router>
   );
 };

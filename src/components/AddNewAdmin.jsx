@@ -10,93 +10,77 @@ const AddNewAdmin = () => {
   const { isAuthenticated } = useContext(Context);
   const navigateTo = useNavigate();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState("");
-  const [gender, setGender] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    dob: "",
+    gender: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleAddNewAdmin = async (e) => {
-    e.preventDefault();
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
-    // Validation
-    if (!/^[A-Za-z ]{3,}$/.test(firstName))
-      return toast.error("First Name must contain at least 3 letters", {
-        autoClose: 5000,
-        position: "top-center",
-      });
-    if (!/^[A-Za-z ]{3,}$/.test(lastName))
-      return toast.error("Last Name must contain at least 3 letters", {
-        autoClose: 5000,
-        position: "top-center",
-      });
-    if (!/^\d{10}$/.test(phone))
-      return toast.error("Phone number must contain exactly 10 digits", {
-        autoClose: 5000,
-        position: "top-center",
-      });
-    if (password.length < 8)
-      return toast.error("Password must be at least 8 characters", {
-        autoClose: 5000,
-        position: "top-center",
-      });
-    if (password !== confirmPassword)
-      return toast.error("Passwords do not match", {
-        autoClose: 5000,
-        position: "top-center",
-      });
-    if (!["Male", "Female"].includes(gender))
-      return toast.error("Please select a valid gender", {
-        autoClose: 5000,
-        position: "top-center",
-      });
+  const validateForm = () => {
+    const { firstName, lastName, phone, password, confirmPassword, gender } =
+      formData;
+    if (!/^[A-Za-z ]{3,}$/.test(firstName)) {
+      toast.error("First Name must contain at least 3 letters");
+      return false;
+    }
+    if (!/^[A-Za-z ]{3,}$/.test(lastName)) {
+      toast.error("Last Name must contain at least 3 letters");
+      return false;
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      toast.error("Phone number must contain exactly 10 digits");
+      return false;
+    }
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return false;
+    }
+    if (!["Male", "Female"].includes(gender)) {
+      toast.error("Please select a valid gender");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
     try {
       const { data } = await axios.post(
         "https://hms-backend-deployed-f9l0.onrender.com/api/v1/user/admin/addnew",
-        {
-          firstName,
-          lastName,
-          email,
-          phone,
-          dob,
-          gender,
-          password,
-          role: "Admin",
-        },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
+        { ...formData, role: "Admin" },
+        { withCredentials: true }
       );
-
-      // Success toast: appear immediately, redirect after 2s
-      toast.success(data.message, {
-        autoClose: 2000,
-        position: "top-center",
-        pauseOnHover: false,
-        onClose: () => navigateTo("/"),
+      toast.success(data.message, { onClose: () => navigateTo("/") });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        dob: "",
+        gender: "",
+        password: "",
+        confirmPassword: "",
       });
-
-      // Reset form
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPhone("");
-      setDob("");
-      setGender("");
-      setPassword("");
-      setConfirmPassword("");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong", {
-        autoClose: 5000,
-        position: "top-center",
-      });
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -107,62 +91,61 @@ const AddNewAdmin = () => {
       <div className="add-new-admin-box">
         <img src="/logo.png" alt="logo" className="add-new-admin-logo" />
         <h1 className="admin-form-title">ADD NEW ADMIN</h1>
-        <form onSubmit={handleAddNewAdmin} className="add-new-admin-form">
-          <div className="add-new-admin-row">
-            <input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="add-new-admin-row">
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="add-new-admin-row">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="add-new-admin-row">
-            <input
-              type="tel"
-              placeholder="Phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="add-new-admin-form">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+
           <div className="add-new-admin-password-row">
-            <div className="add-new-admin-password-input">
+            <div>
               <input
                 type={showPassword ? "text" : "password"}
+                name="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleChange}
                 required
               />
               <span onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
-            <div className="add-new-admin-password-input">
+            <div>
               <input
                 type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
                 placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={formData.confirmPassword}
+                onChange={handleChange}
                 required
               />
               <span
@@ -172,28 +155,27 @@ const AddNewAdmin = () => {
               </span>
             </div>
           </div>
-          <div className="add-new-admin-row">
-            <input
-              type="text"
-              placeholder="Date of Birth"
-              onFocus={(e) => (e.target.type = "date")}
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
-              required
-            />
-            <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              required
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </div>
-          <div className="add-new-admin-submit">
-            <button type="submit">Add New Admin</button>
-          </div>
+
+          <input
+            type="date"
+            name="dob"
+            placeholder="Date of Birth"
+            value={formData.dob}
+            onChange={handleChange}
+            required
+          />
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+
+          <button type="submit">Add New Admin</button>
         </form>
       </div>
     </div>
