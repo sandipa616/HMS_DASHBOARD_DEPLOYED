@@ -185,6 +185,17 @@ tbody tr:nth-child(even) {
   color: #f44336;
   font-size: 1.4rem;
 }
+.delete-icon {
+  color: #e74c3c;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.delete-icon:hover {
+  color: #c0392b;
+}
+
 
 /* ==================== Responsiveness ==================== */
 

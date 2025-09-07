@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { GoCheckCircleFill } from "react-icons/go";
-import { AiFillCloseCircle, AiOutlineClockCircle } from "react-icons/ai";
+import { AiFillCloseCircle, AiOutlineClockCircle, AiFillDelete } from "react-icons/ai"; // 👈 Added Delete icon
 import "react-toastify/dist/ReactToastify.css";
 import "./Dashboard.css";
 
@@ -71,11 +71,37 @@ const Dashboard = () => {
     }
   };
 
+  // Delete appointment
+  const handleDeleteAppointment = async (appointmentId) => {
+    if (!window.confirm("Are you sure you want to delete this appointment?")) {
+      return;
+    }
+
+    try {
+      const { data } = await axios.delete(
+        `https://hms-backend-deployed-f9l0.onrender.com/api/v1/appointment/delete/${appointmentId}`,
+        { withCredentials: true }
+      );
+
+      setAppointments((prevAppointments) =>
+        prevAppointments.filter((appointment) => appointment._id !== appointmentId)
+      );
+
+      toast.success(data.message || "Appointment deleted successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to delete appointment");
+    }
+  };
+
   // Status Icon
   const getStatusIcon = (status) => {
-    if (status === "Pending") return <AiOutlineClockCircle className="status-icon pending" />;
-    if (status === "Accepted") return <GoCheckCircleFill className="status-icon accepted" />;
-    if (status === "Rejected") return <AiFillCloseCircle className="status-icon rejected" />;
+    if (status === "Pending")
+      return <AiOutlineClockCircle className="status-icon pending" />;
+    if (status === "Accepted")
+      return <GoCheckCircleFill className="status-icon accepted" />;
+    if (status === "Rejected")
+      return <AiFillCloseCircle className="status-icon rejected" />;
   };
 
   if (!isAuthenticated) {
@@ -126,6 +152,7 @@ const Dashboard = () => {
                 <th>Department</th>
                 <th>Status</th>
                 <th>Visited</th>
+                <th>Actions</th> {/* 👈 New column */}
               </tr>
             </thead>
             <tbody>
@@ -169,11 +196,18 @@ const Dashboard = () => {
                         <AiFillCloseCircle className="red" />
                       )}
                     </td>
+                    <td>
+                      <AiFillDelete
+                        className="delete-icon"
+                        title="Delete Appointment"
+                        onClick={() => handleDeleteAppointment(appointment._id)}
+                      />
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
+                  <td colSpan="7" style={{ textAlign: "center" }}>
                     No Appointments Found!
                   </td>
                 </tr>
